@@ -86,10 +86,12 @@ d3.sankey = function() {
       links.forEach(function(link) {
         var source = link.source,
             target = link.target;
+            console.log(nodes[link.source])
         if (typeof source === "number") source = link.source = nodes[link.source];
         if (typeof target === "number") target = link.target = nodes[link.target];
         source.sourceLinks.push(link);
         target.targetLinks.push(link);
+        
       });
     }
   
@@ -118,6 +120,7 @@ d3.sankey = function() {
           node.x = x;
           node.dx = nodeWidth;
           node.sourceLinks.forEach(function(link) {
+            console.log(nodes)
             if (nextNodes.indexOf(link.target) < 0) {
               nextNodes.push(link.target);
             }
