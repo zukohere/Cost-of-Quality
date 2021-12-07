@@ -100,9 +100,9 @@
     }
 
     .ending-value {
-      font-size: 0.7em;
+      font-size: 20px;
       text-anchor: end;
-      font-weight: 600;
+      font-weight: 10;
       font-feature-settings: 'tnum'1;
     }
 
@@ -149,25 +149,18 @@
         // Accessors
         console.log("hello")
         const sexAccessor = d => d.sex
-        const sexes = ["male"]
+        const sexes = ["male","female"]
         const sexIds = d3.range(sexes.length)
 
         const educationAccessor = d => d.education
-        const educationNames = [
-          "Drowning",
-          "Sickness_med",
-          "Starvation",
-          "Unknown",
-          "Vehicle"
-        ]
+        let educationNames = [...new Set([].concat.apply([],Array.from(dataset,d=> Object.keys(d.endpoint))))]
+        console.log(educationNames)
         const educationIds = d3.range(educationNames.length)
-
+        console.log(educationIds)
         const sesAccessor = d => d.ses
-        const sesNames = ["Mediterranean",
-          "Horn",
-          "North",
-          "USMex",
-          "Sub-Saharan"]
+        let sesNames = [...new Set(Array.from(dataset,d=> d.ses))]
+        console.log(sesNames)
+          
         const sesIds = d3.range(sesNames.length)
 
         // probabilities
@@ -176,7 +169,7 @@
           const key = getStatusKey(startingPoint)
           let stackedProbability = 0
           stackedProbabilities[key] = educationNames.map((education, i) => {
-            stackedProbability += (startingPoint[education] / 100)
+            stackedProbability += (startingPoint.endpoint[education]/100)
             if (i == educationNames.length - 1) {
               // account for rounding
               return 1
@@ -196,7 +189,9 @@
             sex: sexes[sex],
             ses: sesNames[ses],
           })
+          
           const probabilities = stackedProbabilities[statusKey]
+          // console.log("female--Horn")
           const education = d3.bisect(probabilities, Math.random())
 
           return {
@@ -327,32 +322,77 @@
           .attr("y", (d, i) => endYScale(i) - 15)
           .text(d => d)
 
-        const legendGroup = bounds.append("g")
-          .attr("class", "legend")
-          .attr("transform", `translate(${dimensions.boundedWidth}, 5)`)
-
-        const maleLegend = legendGroup.append("g")
-          .attr("transform", `translate(${-dimensions.endsBarsWidth / 2 - 4}, 0)`)
+          const legendGroup = bounds.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${dimensions.boundedWidth}, 5)`)
+  
+    const femaleLegend = legendGroup.append("g")
+    .attr("transform", `translate(${-dimensions.endsBarsWidth * 1.5 + dimensions.endingBarPadding + 1}, 0)`)
+  
+    var triangle = d3.symbol()
+            .type(d3.symbolTriangle)
+            .size(50)
+            
+    femaleLegend.append("path")
+    .attr("d", triangle)
+    .attr("transform", "translate(-7, 2)")
+  
+    femaleLegend.append("text")
+    .attr("class", "legend-text-left")
+    .text("Female")
+    .attr("x", -20)
+    .attr("y", 4)
+  
+    femaleLegend.append("line")
+    .attr("class", "legend-line")
+    .attr("x1", -dimensions.endsBarsWidth / 2 + 19)
+    .attr("x2", -dimensions.endsBarsWidth / 2 + 19)
+    .attr("y1", 12)
+    .attr("y2", 37)
+  
+    const maleLegend = legendGroup.append("g")
+    .attr("transform", `translate(${-dimensions.endsBarsWidth / 2 - 4}, 0)`)
+  
+    maleLegend.append("circle")
+    .attr("r", 5.5)
+    .attr("transform", "translate(5, 0)")
+  
+    maleLegend.append("text")
+    .attr("class", "legend-text-right")
+    .text("Male")
+    .attr("x", 15)
+    .attr("y", 4)
+  
+    maleLegend.append("line")
+    .attr("class", "legend-line")
+    .attr("x1", -dimensions.endsBarsWidth / 2 - 6)
+    .attr("x2", -dimensions.endsBarsWidth / 2 - 6)
+    .attr("y1", 12)
+    .attr("y2", 37)
 
 
         // draw data
-        const maleMarkers = endingLabelsGroup.selectAll(".male-marker")
+        const femaleMarkers = endingLabelsGroup.selectAll(".female-marker")
           .data(educationIds)
           .enter().append("circle")
-          .attr("class", "ending-marker male-marker")
+          .attr("class", "ending-marker female-marker")
           .attr("r", 5.5)
           .attr("cx", 5)
           .attr("cy", d => endYScale(d) + 5)
 
-
-        const femaleMarkers = endingLabelsGroup.selectAll(".female-marker")
+          var triangle = d3.symbol()
+            .type(d3.symbolTriangle)
+            .size(50)
+            
+        const maleMarkers = endingLabelsGroup.selectAll(".male-marker")
           .data(educationIds)
-          .enter().append("polygon")
-          .attr("class", "ending-marker female-marker")
-          .attr("points", trianglePoints)
+          .enter().append("path")
+          .attr("class", "ending-marker male-marker")
+          .attr("d", triangle)
           .attr("transform", d => `translate(5, ${endYScale(d) + 20})`)
 
-        const maxPeople = 1000
+        // number of units flowing into system
+        const maxPeople = 100
         let people = []
         const markersGroup = bounds.append("g")
           .attr("class", "markers-group")
@@ -362,6 +402,10 @@
           .attr("transform", `translate(${dimensions.boundedWidth}, 0)`)
 
         function updateMarkers(elapsed) {
+          //keep labels from writing on top of each other.
+          endingLabelsGroup.selectAll(".ending-value").html("")
+          //
+
           const xProgressAccessor = d => (elapsed - d.startTime) / 5000
           if (people.length < maxPeople) {
             people = [
@@ -386,9 +430,13 @@
               xProgressAccessor(d) < 1
               && sexAccessor(d) == 1
             )), d => d.id)
-          males.enter().append("polygon")
+
+            var triangle = d3.symbol()
+            .type(d3.symbolTriangle)
+            .size(50)
+          males.enter().append("path")
             .attr("class", "marker marker-triangle")
-            .attr("points", trianglePoints)
+            .attr("d", triangle)
             .style("opacity", 0)
           males.exit().remove()
 
@@ -444,27 +492,34 @@
             ))
           )
 
-          // endingBarGroup.selectAll(".ending-label")
-          //   .data(endingPercentages)
-          //   .enter()
-          //   .append("rect")
-          //   // .join('rect')
-          //   .attr("class", "ending-bar")
-          //   .attr("x", d => -dimensions.endsBarsWidth * (d.sexId + 1) - (d.sexId * dimensions.endingBarPadding))
-          //   .attr("width", dimensions.endsBarsWidth)
-          //   .attr("y", d => endYScale(d.endingId) - dimensions.pathHeight / 2 + dimensions.pathHeight * d.percentAbove)
-          //   .attr("height", d => d.countInBar ? dimensions.pathHeight * d.percent : dimensions.pathHeight)
-          //   .attr("fill", d => d.countInBar ? colorScale(d.sesId) : "#DADADD")
+          endingBarGroup.selectAll(".ending-label")
+            .data(endingPercentages)
+            .enter()
+            .append("rect")
+            // .join('rect')
+            .attr("class", "ending-bar")
+            .attr("x", d => -dimensions.endsBarsWidth * (d.sexId + 1) - (d.sexId * dimensions.endingBarPadding))
+            .attr("width", dimensions.endsBarsWidth)
+            .attr("y", d => endYScale(d.endingId) - dimensions.pathHeight / 2 + dimensions.pathHeight * d.percentAbove)
+            .attr("height", d => d.countInBar ? dimensions.pathHeight * d.percent : dimensions.pathHeight)
+            .attr("fill", d => d.countInBar ? colorScale(d.sesId) : "#DADADD")
 
 
-          // endingLabelsGroup.selectAll(".ending-bar")
-          //   .data(endingPercentages)
-          //   .append("text")
-          //   .attr("class", "ending-value")
-          //   .attr("x", d => (d.sesId) * 33 + 47)
-          //   .attr("y", d => endYScale(d.endingId) - dimensions.pathHeight / 2 + 14 * d.sexId + 35)
-          //   .attr("fill", d => d.countInBar ? colorScale(d.sesId) : "#DADADD")
-          //   .text(d => d.count)
+          endingLabelsGroup.selectAll(".ending-bar")
+            .data(endingPercentages)
+            .enter()
+            .append("text")
+            .attr("class", "ending-value")
+            .attr("x", d => (d.sesId) * 33 + 47)
+            .attr("y", d => endYScale(d.endingId) - dimensions.pathHeight / 2 + 14 * d.sexId + 35)
+            .attr("fill", d => d.countInBar ? colorScale(d.sesId) : "#DADADD")
+            .text(d => d.count)
+            // .selectAll(".ending-value")
+            // .exit()
+
+          
+          
+          // console.log(endingPercentages)
 
         }
 
@@ -472,7 +527,7 @@
       })
     }
 
-//helper functions
+    //helper functions
     getStatusKey = ({ sex, ses }) => [sex, ses].join("--")
     sentenceCase = str => [
       str.slice(0, 1).toUpperCase(),
@@ -483,7 +538,7 @@
 
     getRandomNumberInRange = (min, max) => Math.random() * (max - min) + min
 
-    //reference: https://observablehq.com/@mattlawhon/animated-sankey
+    //reference: https://observablehq.com/@chekos/animated-sankey
 
   </script>
 </body>
