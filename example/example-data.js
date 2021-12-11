@@ -1,4 +1,4 @@
-let data2 = {
+let data1 = {
     "nodes": [
       { "name": "startA" },
       { "name": "startB" },
@@ -63,7 +63,7 @@ let data2 = {
   };
 
 
-  var data1 = {
+  var data3 = {
     "nodes": [
       { "name": "start" },
       { "name": "process0-0" },
@@ -405,7 +405,7 @@ let data2 = {
     ]
   }
 
-  let data3 = {
+  let data2 = {
     "nodes": [
       { "name": "Oceans" },
       { "name": "Evaporation" },

@@ -36,4 +36,43 @@
             "Vehicle": 0}
       }
   ]
+,
+"Level 2": [
+  {
+      "sex": "fun",
+      "ses": "happy",
+      "endpoint": {"Drowning": 100,
+          "Sickness_med": 0,
+          "Starvation": 0,
+          "Unknown": 0,
+          "Vehicle": 0}
+    },
+  {
+    "sex": "fun",
+    "ses": "sad",
+    "endpoint": {"Drowning": 100,
+    "Sickness_med": 0,
+    "Starvation": 0,
+    "Unknown": 0,
+    "Vehicle": 0}
+  },
+  {
+      "sex": "not fun",
+      "ses": "happy",
+      "endpoint": {"Drowning": 100,
+          "Sickness_med": 0,
+          "Starvation": 0,
+          "Unknown": 0,
+          "Vehicle": 0}
+    },
+    {
+      "sex": "not fun",
+      "ses": "sad",
+      "endpoint": {"Drowning": 100,
+          "Sickness_med": 0,
+          "Starvation": 0,
+          "Unknown": 0,
+          "Vehicle": 0}
+    }
+]
 }

@@ -1,0 +1,54 @@
+{
+  "Level 1": [
+    {
+      "sex": "Defective",
+      "ses": "Manufacture & Inspection",
+      "endpoint": {
+        "Scrap": 45,
+        "Rework": 45,
+        "Customer": 10
+      }
+    },
+    {
+      "sex": "Good_Quality",
+      "ses": "Manufacture & Inspection",
+      "endpoint": {
+        "Scrap": 5,
+        "Rework": 5,
+        "Customer": 90
+      }
+    },
+    {
+      "sex": "Defective",
+      "ses": "Return Inspection",
+      "endpoint": {
+        "Inspection": 100
+      }
+    },
+    {
+      "sex": "Good_Quality",
+      "ses": "Return Inspection",
+      "endpoint": {
+        "Inspection": 100
+      }
+    }
+  ],
+  "Level 2": [
+    {
+      "sex": "Defective",
+      "ses": "Unit",
+      "endpoint": {
+        "Pass_Inspection": 1,
+        "Fail_Inspection": 99
+      }
+    },
+    {
+      "sex": "Good_Quality",
+      "ses": "Unit",
+      "endpoint": {
+        "Pass_Inspection": 99,
+        "Fail_Inspection": 1
+      }
+    }
+  ]
+}
