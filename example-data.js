@@ -1,13 +1,13 @@
 let data2 = {
     "nodes": [
-      { "name": "Preventive (Design, Manufacture, etc.)" },
-      { "name": "Inspect" },
-      { "name": "Customer" },
-      { "name": "Rework" },
-      { "name": "Scrap" },
-      { "name": "Good" },
-      { "name": "Return" },
-      { "name": "Field Scrap" }
+      { "name": "Preventive (Design, Manufacture, etc.)", "index": 0 },
+      { "name": "Inspect", "index": 1 },
+      { "name": "Customer", "index": 2 },
+      { "name": "Rework", "index": 3 },
+      { "name": "Scrap" , "index": 4},
+      { "name": "Good", "index": 5 },
+      { "name": "Return", "index": 6 },
+      { "name": "Field Scrap", "index": 7 }
     ],
     "links": [
       { "source": "Preventive (Design, Manufacture, etc.)", "target": "Inspect", "value": 20, "optimal": "yes" },

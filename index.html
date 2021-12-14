@@ -7,6 +7,8 @@
   <script src="d3-sankey-circular.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="example-data.js"></script>
+  
+  
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:100i" rel="stylesheet">
 
@@ -33,6 +35,14 @@
     .link {
       fill: none;
     }
+
+    svg {
+  position: absolute;
+}
+
+canvas {
+  position: absolute;
+}
   </style>
 </head>
 
@@ -40,10 +50,12 @@
 
   <h1>Sankey with circular links</h1>
 
-  <div id="chart"></div>
-
+  <canvas width="1000" height="1000" ></canvas>
+   <svg width="1000" height="1000" ></svg>
   <script>
-    var margin = { top: 150, right: 100, bottom: 130, left: 120 };
+    
+    // var margin = { top: 150, right: 100, bottom: 130, left: 120 };
+    var margin = { top: 0, right: 100, bottom: 130, left: 0 };
     var width = 1000;
     var height = 400;
 
@@ -56,16 +68,24 @@
     var sankey = d3.sankey()
       .nodeWidth(10)
       .nodePadding(nodePadding)
-      .nodePaddingRatio(0.5)
+      .nodePaddingRatio(0.9)
       .scale(0.5)
       .size([width, height])
       .nodeId(function (d) {
         return d.name;
       })
-      .nodeAlign(d3.sankeyJustify)
+      // .nodeAlign(d3.sankeyJustify)
       //.iterations(1);
+      // console.log(sankey)
 
-    var svg = d3.select("#chart").append("svg")
+    // var svg = d3.select("#chart").append("svg")
+    var canvas = d3.select("canvas")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      // .append("g")
+      // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var svg = d3.select("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom);
 
@@ -137,7 +157,7 @@
       .attr("x", function (d) { return (d.x0 + d.x1) / 2; })
       .attr("y", function (d) { return d.y0 - 12; })
       .attr("dy", "0.35em")
-      .attr("text-anchor", "middle")
+      .attr("text-anchor", "start")
       .text(function (d) { return d.name; });
 
     node.append("title")
@@ -165,21 +185,21 @@
 
 
     //ARROWS
-    var arrowsG = linkG.data(sankeyLinks)
-      .enter()
-      .append("g")
-      .attr("class", "g-arrow")
-      .call(appendArrows, 10, 10, 4) //arrow length, gap, arrow head size
+    // var arrowsG = linkG.data(sankeyLinks)
+    //   .enter()
+    //   .append("g")
+    //   .attr("class", "g-arrow")
+    //   .call(appendArrows, 10, 10, 4) //arrow length, gap, arrow head size
 
-    arrowsG.selectAll("path")
-      .style("stroke-width", "10")
-      //.style("stroke-dasharray", "10,10")
+    // arrowsG.selectAll("path")
+    //   .style("stroke-width", "10")
+    //   //.style("stroke-dasharray", "10,10")
 
-      arrowsG.selectAll(".arrow-head").remove()
+    //   arrowsG.selectAll(".arrow-head").remove()
 
-    let duration = 5
-    let maxOffset = 10;
-    let percentageOffset = 1;
+    // let duration = 5
+    // let maxOffset = 10;
+    // let percentageOffset = 1;
 
     //https://stackoverflow.com/questions/35556876/javascript-repeat-a-function-x-amount-of-times
     function runFunctionXTimes(callback, interval, repeatTimes) {
@@ -198,17 +218,17 @@
   //
 
     // var animateDash = setInterval(updateDash, duration);
-    runFunctionXTimes(updateDash,duration,5)
+    // runFunctionXTimes(updateDash,duration,5)
 
 
-    function updateDash() {
+    // function updateDash() {
 
-      arrowsG.selectAll("path")
-      .style("stroke-dashoffset", percentageOffset * maxOffset)
+    //   arrowsG.selectAll("path")
+    //   .style("stroke-dashoffset", percentageOffset * maxOffset)
 
-      percentageOffset = percentageOffset == 0 ? 1 : percentageOffset - 0.01
-      // percentageOffset = percentageOffset == 0.5 
-    }
+    //   percentageOffset = percentageOffset == 0 ? 1 : percentageOffset - 0.01
+    //   // percentageOffset = percentageOffset == 0.5 
+    // }
 
     function highlightNodes(node, name) {
 
@@ -236,6 +256,8 @@
 
     
   </script>
+  <!-- <script src="d3.sankey.js"></script> -->
+  <script src="draw-units.js"></script>
 </body>
 
 </html>
