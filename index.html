@@ -74,8 +74,8 @@ canvas {
       .nodeId(function (d) {
         return d.name;
       })
-      // .nodeAlign(d3.sankeyJustify)
-      //.iterations(1);
+      .nodeAlign(d3.sankeyCenter)
+      .iterations(1);
       // console.log(sankey)
 
     // var svg = d3.select("#chart").append("svg")
@@ -175,9 +175,9 @@ canvas {
       .style("stroke", function (link, i) {
         return link.circular ? "red" : "black"
       })
+    .attr("id", function (d) {return "path"+d.level})
     
     
-
     link.append("title")
       .text(function (d) {
         return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
