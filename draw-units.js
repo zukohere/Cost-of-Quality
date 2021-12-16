@@ -116,23 +116,24 @@ level = -1
 
 function tick(elapsed, time) {
   if (particles.filter(d=>d.current < d.length).length=== 0) {level = level+1, particles = []}
-  console.log(particles.filter(d=>d.current < d.length).length===0)
+  // console.log(particles.filter(d=>d.current < d.length).length===0)
   // particles = particles.filter(function (d) {return d.current < d.path.getTotalLength()});
-  
+  console.log(level)
   console.log("hi")
   // console.log(d3.selectAll("#path" + 0).getTotalLength())
   // while (level < d3.max(levels)+1){
     
       // console.log(particles.filter(function (d) {return d.current === d.path.getTotalLength()}))
     //  do {d3.selectAll("#path" + level)
+    //  d3.selectAll("#path" + (level))
      d3.selectAll("#path" + (level))
       // .data(data.links)
       // .enter()
       .each(
-        function (d) {
-          
+        function (d,i) {
+          // console.log("i="+i)
           // console.log(particles.filter(d=>d.current>=this.getTotalLength()))
-          testParticles = particles
+          // testParticles = particles
           // if (testParticles.filter(d=>d.current<d.length).length === 0) {level = level+1}
           //        if (d.freq < 1) {
           // for (var x = 0;x<1;x++) {
@@ -144,7 +145,14 @@ function tick(elapsed, time) {
           var length = this.getTotalLength();
           // console.log(length)
           particles.push({ link: d, time: elapsed, offset: offset, path: this, length: length, animateTime: length, speed: 0.5 + (Math.random()) })
-          particles = particles.slice(0, 100)
+        //   particleLinks = [...new Set(Array.from(particles, d => d.link))]
+        //   console.log(particleLinks)
+        // linkParticles=[]
+        // for (link of particleLinks) {
+        // linkParticles.concat(particles.filter(d=>d.link===link).slice(10))
+        // console.log(particles.filter(d=>d.link===link).slice(10))  
+      // }
+        // particles=linkParticles
           
           // When all particles of given level have current == length, 
           // move on to the next level (and add their costs)
@@ -162,7 +170,18 @@ function tick(elapsed, time) {
                     }
                   } */
         });
-    
+
+        testParticles = []
+        for (particleLink of d3.selectAll("#path"+level).data()){
+        testParticles = testParticles.concat(particles.filter(d=>d.link ===particleLink).slice(0,particleLink.value))
+        // particles1 = particles.filter(d=>d.link ===d3.selectAll("#path1").data()[0]).slice(0,100)
+        // particles = particles0.concat(particles1)
+        // console.log(d3.selectAll("#path1").data()[0])
+        // console.log(particles[0].link===d3.selectAll("#path1").data()[1])
+        }
+        particles = testParticles
+
+
     // if (particles.length<1000){
     particleEdgeCanvasPath(elapsed)
     // }
@@ -176,8 +195,8 @@ function tick(elapsed, time) {
       // }while (level<levels.length)
     // }while (testParticles.filter(d=>d.current<d.length && d.link.level===level).length>0)
   // console.log(testParticles.filter(d=>d.current<d.length).length)
-  console.log(level)
-  console.log(particles)
+  // console.log(level)
+  // particles.forEach(d=>console.log(d.link))
   // console.log(level)
   
 }

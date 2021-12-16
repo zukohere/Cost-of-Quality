@@ -14,14 +14,14 @@ let data2 = {
     "links": [
       { "source": "Preventive (Design)", "target": "Incoming Inspect", "value": 20, "optimal": "yes", "level": 0},
 
-      { "source": "Incoming Inspect", "target": "Manufacture", "value": 20, "optimal": "yes", "level": 1},
+      { "source": "Incoming Inspect", "target": "Manufacture", "value": 30, "optimal": "yes", "level": 1},
       { "source": "Incoming Inspect", "target": "Scrap", "value": 20, "optimal": "yes", "level": 1},
       
       { "source": "Manufacture", "target": "Manufacturing Inspect", "value": 20, "optimal": "yes", "level": 2},
 
-      { "source": "Manufacturing Inspect", "target": "Customer", "value": 20, "optimal": "yes" , "level": 3},
-      { "source": "Manufacturing Inspect", "target": "Rework", "value": 20, "optimal": "no" , "level": 3},
-      { "source": "Manufacturing Inspect", "target": "Scrap", "value": 15, "optimal": "yes" , "level": 3},
+      { "source": "Manufacturing Inspect", "target": "Customer", "value": 30, "optimal": "yes" , "level": 3},
+      { "source": "Manufacturing Inspect", "target": "Rework", "value": 10, "optimal": "no" , "level": 3},
+      { "source": "Manufacturing Inspect", "target": "Scrap", "value": 10, "optimal": "yes" , "level": 3},
 
       { "source": "Rework", "target": "Manufacturing Inspect", "value": 20, "optimal": "no" , "level": 4},
 
