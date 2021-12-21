@@ -2,16 +2,16 @@ var thickness = 10
 
 let data2 = {
     "nodes": [
-      { "name": "Preventive (Design)", "index": 0 },
-      { "name": "Manufacture", "index": 0 },
+      { "name": "Preventive (Design)", "index": 0, "cost": 100},
+      { "name": "Manufacture", "index": 0 , "cost": 100},
       // { "name": "Incoming Inspect", "index": 1 },
-      { "name": "Manufacturing Inspect", "index": 1 },
-      { "name": "Rework", "index": 1 },
-      { "name": "Customer", "index": 2 },
-      { "name": "Scrap" , "index": 4},
-      { "name": "Good Quality" , "index": 4},
-      { "name": "Return", "index": 6 },
-      { "name": "Field Scrap", "index": 7 }
+      { "name": "Manufacturing Inspect", "index": 1 , "cost": 100},
+      { "name": "Rework", "index": 1 , "cost": 100},
+      { "name": "Customer", "index": 2 , "cost": 100},
+      { "name": "Scrap" , "index": 4, "cost": 100},
+      { "name": "Good Quality" , "index": 4, "cost": 100},
+      { "name": "Return", "index": 6 , "cost": 100},
+      { "name": "Field Scrap", "index": 7 , "cost": 100}
     ],
     "links": [
       { "source": "Preventive (Design)", "target": "Manufacture", "value": thickness,"units": 100, "optimal": "yes", "level": 0},

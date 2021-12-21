@@ -1,4 +1,49 @@
+
+// var form = d3.select("body").append("form");
+        
+// var p = form.selectAll("p")
+//     .data(data.nodes)
+//     .enter()
+//     .append("p")
+//     .each(function(d){
+//         var self = d3.select(this);
+//         var label = self.append("label")
+//             .text(d.name)
+//             .style("width", "100px")
+//             .style("display", "inline-block");
+
+        
+//             var input = self.append("input")
+//                 .attr({
+//                     type: function(d){ return "text"; },
+//                     name: function(d){ return d.name; }
+//                 });
+        
+//       })
+//         form.append("button")
+//         .attr('type', 'submit')
+//         .attr("id", "run")
+//         .text('Save & Run');
+//       d3.select("#run").on("click",runEnter)
+
+
+
+
+
+
+
+
+
+
+// function runEnter() {
+// Prevent the page from refreshing
+// d3.event.preventDefault();
+////clear svg
+//d3.selectAll("svg > *").remove();
+
 data = data2
+
+
 
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
@@ -13,61 +58,63 @@ for (level of [...new Set(Array.from(data.links, d => d.level))]) {
     prevLinks = data.links.filter(d => d.target === link.source)
     if (level === 0) { link.unitCount = inUnits }
     else {
-      
+
       link.unitCount = Math.floor(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
       // console.log(d3.sum(data.links.filter(d=>d.target===link.source).map(d=>d.unitCount)))
-      if (link ===links[links.length-1])
-      while (d3.sum(data.links.filter(d=>d.source===link.source).map(d=>d.unitCount)) < 
-      d3.sum(data.links.filter(d=>d.target===link.source).map(d=>d.unitCount))) {
-        links[getRandomIntInclusive(0, links.length-1)].unitCount=link.unitCount + 1 * (Math.random() * 100 < link.units)
-      }
-      
-    }
+      if (link === links[links.length - 1])
+        while (d3.sum(data.links.filter(d => d.source === link.source).map(d => d.unitCount)) <
+          d3.sum(data.links.filter(d => d.target === link.source).map(d => d.unitCount))) {
+          var ind =  getRandomIntInclusive(0, links.length - 1)
+          links[ind].unitCount = links[ind].unitCount + 1 * (Math.random() * 100 < link.units)
+        console.log(data.links.filter(d => d.source === link.source))
+        }
+
     }
   }
-    nodeArray = Array.from(data.nodes, d => d.name)
-    sourceArray = [...new Set(Array.from(data.links, d=>d.source.name))]
-    targetArray = [...new Set(Array.from(data.links, d=>d.target.name))]
+}
+nodeArray = Array.from(data.nodes, d => d.name)
+sourceArray = [...new Set(Array.from(data.links, d => d.source.name))]
+targetArray = [...new Set(Array.from(data.links, d => d.target.name))]
 // console.log(data.links)
-  for (node of sourceArray) {
-    unitsIn = d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))
-    unitsOut = d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount))
-    probSum = d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.units))
-    console.log("node:"+node+ " probSum: "+probSum+" units in:"+unitsIn+ " units out:"+ unitsOut)
-  }
-    // for (link of links) {
-    //   node = link.source.name
-    //   if 
-    //   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
-    //   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
-    //     console.log(node)
-    //     console.log(d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount)) + "in")
-    //     console.log(d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) + " out")
-    //     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
-    //     console.log(linktoIncrease)
-    //     console.log(linktoIncrease[0].unitCount)
-    //     ++linktoIncrease[0].unitCount
-        
-    //   console.log("unit added to link with source"+ node)}
-    // }
+for (node of sourceArray) {
+  unitsIn = d3.sum(data.links.filter(d => d.target.name === node).map(d => d.unitCount))
+  unitsOut = d3.sum(data.links.filter(d => d.source.name === node).map(d => d.unitCount))
+  probSum = d3.sum(data.links.filter(d => d.source.name === node).map(d => d.units))
+  console.log("node:" + node + " probSum: " + probSum + " units in:" + unitsIn + " units out:" + unitsOut)
+}
+// for (link of links) {
+//   node = link.source.name
+//   if 
+//   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
+//   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
+//     console.log(node)
+//     console.log(d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount)) + "in")
+//     console.log(d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) + " out")
+//     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
+//     console.log(linktoIncrease)
+//     console.log(linktoIncrease[0].unitCount)
+//     ++linktoIncrease[0].unitCount
 
-  
+//   console.log("unit added to link with source"+ node)}
+// }
 
 
-  // // take the links where any node is a source does the unit count = the sum of any links where it's a target?
-  // for (node of sourceArray) {    
-  //   if 
-  //   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
-  //   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
-  //     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
-  //     ++linktoIncrease[0].unitCount
-  //     console.log(linktoIncrease)
-  //   console.log("unit added to link with source"+ node)}
-  // }
-  
 
 
-  // console.log("level:" + level+ ". Sum current: "+ d3.sum(data.links.filter(d => d.level === level).map(d=>d.unitCount)) )
+// // take the links where any node is a source does the unit count = the sum of any links where it's a target?
+// for (node of sourceArray) {    
+//   if 
+//   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
+//   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
+//     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
+//     ++linktoIncrease[0].unitCount
+//     console.log(linktoIncrease)
+//   console.log("unit added to link with source"+ node)}
+// }
+
+
+
+// console.log("level:" + level+ ". Sum current: "+ d3.sum(data.links.filter(d => d.level === level).map(d=>d.unitCount)) )
 
 
 //for every link in level i, sum the unitCount in level i-1. 
@@ -87,65 +134,85 @@ for (level of [...new Set(Array.from(data.links, d => d.level))]) {
 //       // .append("g")
 //       // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 var svg = d3.select("#barcharts"),
-    margin = {top: 20, right: 20, bottom: 250, left: 40},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom
+  margin = { top: 20, right: 20, bottom: 250, left: 40 },
+  width = +svg.attr("width") - margin.left - margin.right,
+  height = +svg.attr("height") - margin.top - margin.bottom
 
 var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-    y = d3.scaleLinear().rangeRound([height, 0]);
+  y = d3.scaleLinear().rangeRound([height, 0]);
 
-    var g = svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var g = svg.append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 // set the domains of the axes
-x.domain(data.nodes.map(function(d) { return d.name; }));
+x.domain(data.nodes.map(function (d) { return d.name; }));
 y.domain([0, inUnits]);
 
 // add the svg elements
 g.append("g")
-    .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")  
-    .style("text-anchor", "end")
-    .attr("dx", "-.8em")
-    .attr("dy", ".15em")
-    .attr("transform", "rotate(-65)");
+  .attr("class", "axis axis--x")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+  .style("text-anchor", "end")
+  .attr("dx", "-.8em")
+  .attr("dy", ".15em")
+  .attr("transform", "rotate(-65)");
 
 g.append("g")
-    .attr("class", "axis axis--y")
-    .call(d3.axisLeft(y).ticks(10))
-  // .append("text")
-  //   .attr("transform", "rotate(-90)")
-  //   .attr("y", 6)
-  //   .attr("dy", "0.71em")
-  //   .attr("text-anchor", "end")
-  //   .text("Frequency");
+  .attr("class", "axis axis--y")
+  .call(d3.axisLeft(y).ticks(10))
+// .append("text")
+//   .attr("transform", "rotate(-90)")
+//   .attr("y", 6)
+//   .attr("dy", "0.71em")
+//   .attr("text-anchor", "end")
+//   .text("Frequency");
 
-  //   // create the bars
-  var targetUnits = [{"node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b=>b.name===nodeArray[0])[0].x0}] 
-  for (node of nodeArray.slice(1)) {
-    var terminal =  targetArray.includes(node) && !sourceArray.includes(node)
+//   // create the bars
+var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b => b.name === nodeArray[0])[0].x0 }]
+for (node of nodeArray.slice(1)) {
+  var terminal = targetArray.includes(node) && !sourceArray.includes(node)
 
-    var nodes = nodeG.data(sankeyNodes).enter().data()
-    // console.log(nodes)
-    sColor = nodes.filter(b=>b.name===node)[0].x0
-    targetUnits.push({"node": node, "terminal": terminal, "units": 0, "sColor": sColor})
-   }
-  // console.log(targetUnits)
-  // console.log("---------------")
-  g.selectAll(".bar")
-    .data(targetUnits)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.node); })
-      .attr("y", function(d) { return y(d.units); })
-      .attr("width", x.bandwidth())
-      .attr("height", function(d) { return height - y(d.units); })
-      // .style("fill", function (d) { return nodeColour(sankeyNodes.filter(b=>b.name===d.node)[0].x0); });
-      .style("fill", function (d) {return nodeColour(d.sColor)})
-      .style("opacity", 0.5);
-      // .style("fill", function (d) { console.log(sankeyNodes.filter(b=>b.name===d.node)[0]); });
+  var nodes = nodeG.data(sankeyNodes).enter().data()
+  // console.log(nodes)
+  sColor = nodes.filter(b => b.name === node)[0].x0
+  targetUnits.push({ "node": node, "terminal": terminal, "units": 0, "sColor": sColor })
+}
+// console.log(targetUnits)
+// console.log("---------------")
+g.selectAll(".bar")
+  .data(targetUnits)
+  .enter().append("rect")
+  .attr("class", "bar")
+  .attr("x", function (d) { return x(d.node); })
+  .attr("y", function (d) { return y(d.units); })
+  .attr("width", x.bandwidth())
+  .attr("height", function (d) { return height - y(d.units); })
+  // .style("fill", function (d) { return nodeColour(sankeyNodes.filter(b=>b.name===d.node)[0].x0); });
+  .style("fill", function (d) { return nodeColour(d.sColor) })
+  .style("opacity", 0.5);
+// .style("fill", function (d) { console.log(sankeyNodes.filter(b=>b.name===d.node)[0]); });
 // console.log(data.links.filter(d => d.level == 0))
+
+g.selectAll(".text")
+  .data(targetUnits)
+  .enter()
+  .append("text")
+  .attr("class", "label")
+  .text(function (d) {
+    return d.units;
+  })
+  .attr("x", function (d) {
+    return x(d.node) + x.bandwidth() / 2;
+  })
+  .attr("y", function (d) {
+    return y(d.units) - 5;
+  })
+  .attr("font-family", "sans-serif")
+  .attr("font-size", "14px")
+  .attr("fill", "black")
+  .attr("text-anchor", "middle");
+
 
 sankey.link = function () {
   var curvature = .5;
@@ -263,7 +330,7 @@ level = -1
 
 function tick(elapsed, time) {
   if (particles.filter(d => d.current < d.length).length === 0) {
-    
+
     if (particles.length > 0) {
       totalUnits = totalUnits.concat(particles)
       updateCharts()
@@ -348,12 +415,12 @@ function tick(elapsed, time) {
     // console.log(particles[0].link===d3.selectAll("#path1").data()[1])
   }
   particles = testParticles
-  
+
   // console.log("circular = "+ particles[0].link.circular)
 
   // if (particles.length<1000){
   particleEdgeCanvasPath(elapsed)
-  
+
   // }
   // };
   // console.log(testParticles)
@@ -403,17 +470,17 @@ function updateCharts() {
   // var targetUnits = [{"node": nodeArray[0], "units": inUnits}]
   for (node of Array.from(data.nodes, d => d.name).slice(1)) {
     // targetUnits.push({ "node": node, "units": totalUnits.filter(d => d.link.target.name === node).length })
-    
+
     // passes totalUnits count back to targetUnits for bar chart
-    lookupTarget = targetUnits.find(p=>p.node==node) 
-    lookupTarget.units = totalUnits.filter(d => d.link.target.name === node).length 
-  // console.log(lookupTarget)
+    lookupTarget = targetUnits.find(p => p.node == node)
+    lookupTarget.units = totalUnits.filter(d => d.link.target.name === node).length
+    // console.log(lookupTarget)
   }
   // console.log(targetUnits)
-  console.log("Total exiting system: "+d3.sum(targetUnits.filter(d=>d.terminal===true).map(d=>d.units)))
+  console.log("Total exiting system: " + d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units)))
 
 
-  
+
   // console.log("yscale10 is "+yScale(10))
   // console.log(yScale(10))
   // g.selectAll(".bar")
@@ -425,14 +492,28 @@ function updateCharts() {
   //     .attr("width", x.bandwidth())
   //     .attr("height", function(d) { return height - y(d.units); });
 
-      // update the bars
+  // update the bars
   g.selectAll(".bar")
-  .data(targetUnits)
-      .transition().duration(1000)
+    .data(targetUnits)
+    .transition().duration(1000)
     .attr("class", "bar")
-    .attr("x", function(d) { return x(d.node); })
-    .attr("y", function(d) { return y(d.units); })
+    .attr("x", function (d) { return x(d.node); })
+    .attr("y", function (d) { return y(d.units); })
     .attr("width", x.bandwidth())
-    .attr("height", function(d) { return height - y(d.units)});
+    .attr("height", function (d) { return height - y(d.units) });
+
+  g.selectAll(".label")
+    .data(targetUnits)
+    .transition().duration(1000)
+    .text(function (d) {
+      return d.units;
+    })
+    .attr("x", function (d) {
+      return x(d.node) + x.bandwidth() / 2;
+    })
+    .attr("y", function (d) {
+      return y(d.units) - 5;
+    })
 
 }
+// }
