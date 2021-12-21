@@ -26,8 +26,8 @@ let data2 = {
       { "source": "Manufacturing Inspect", "target": "Rework", "value": thickness,"units": 10, "optimal": "no" , "level": 2},
       { "source": "Manufacturing Inspect", "target": "Scrap", "value": thickness,"units": 10, "optimal": "yes" , "level": 2},
 
-      { "source": "Rework", "target": "Customer", "value": thickness,"units": 100, "optimal": "no" , "level": 3},
-      { "source": "Rework", "target": "Scrap", "value": thickness,"units": 100, "optimal": "no" , "level": 3},
+      { "source": "Rework", "target": "Customer", "value": thickness,"units": 75, "optimal": "no" , "level": 3},
+      { "source": "Rework", "target": "Scrap", "value": thickness,"units": 25, "optimal": "no" , "level": 3},
 
       { "source": "Customer", "target": "Good Quality", "value": thickness,"units": 80, "optimal": "no" , "level": 4},
       { "source": "Customer", "target": "Field Scrap", "value": thickness,"units": 5, "optimal": "yes" , "level": 4},

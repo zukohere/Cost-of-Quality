@@ -1,26 +1,93 @@
 data = data2
 
-const inUnits = 10
-for (level of [...new Set(Array.from(data.links, d => d.level))]) {
-  // console.log(level)
-  for (link of data.links.filter(d => d.level === level)) {
-    if (level === 0) { link.unitCount = inUnits }
-    else {
-      prevLinks = data.links.filter(d => d.target === link.source)
-      link.unitCount = Math.ceil(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
-    }
-    // console.log(link)
-  }
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
-nodeArray = Array.from(data.nodes, d => d.name)
+const inUnits = 30
+for (level of [...new Set(Array.from(data.links, d => d.level))]) {
+  links = data.links.filter(d => d.level === level)
+  for (link of links) {
+    prevLinks = data.links.filter(d => d.target === link.source)
+    if (level === 0) { link.unitCount = inUnits }
+    else {
+      
+      link.unitCount = Math.floor(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
+      // console.log(d3.sum(data.links.filter(d=>d.target===link.source).map(d=>d.unitCount)))
+      if (link ===links[links.length-1])
+      while (d3.sum(data.links.filter(d=>d.source===link.source).map(d=>d.unitCount)) < 
+      d3.sum(data.links.filter(d=>d.target===link.source).map(d=>d.unitCount))) {
+        links[getRandomIntInclusive(0, links.length-1)].unitCount=link.unitCount + 1 * (Math.random() * 100 < link.units)
+      }
+      
+    }
+    }
+  }
+    nodeArray = Array.from(data.nodes, d => d.name)
+    sourceArray = [...new Set(Array.from(data.links, d=>d.source.name))]
+    targetArray = [...new Set(Array.from(data.links, d=>d.target.name))]
+// console.log(data.links)
+  for (node of sourceArray) {
+    unitsIn = d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))
+    unitsOut = d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount))
+    probSum = d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.units))
+    console.log("node:"+node+ " probSum: "+probSum+" units in:"+unitsIn+ " units out:"+ unitsOut)
+  }
+    // for (link of links) {
+    //   node = link.source.name
+    //   if 
+    //   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
+    //   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
+    //     console.log(node)
+    //     console.log(d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount)) + "in")
+    //     console.log(d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) + " out")
+    //     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
+    //     console.log(linktoIncrease)
+    //     console.log(linktoIncrease[0].unitCount)
+    //     ++linktoIncrease[0].unitCount
+        
+    //   console.log("unit added to link with source"+ node)}
+    // }
+
+  
+
+
+  // // take the links where any node is a source does the unit count = the sum of any links where it's a target?
+  // for (node of sourceArray) {    
+  //   if 
+  //   (d3.sum(data.links.filter(d=>d.source.name===node).map(d=>d.unitCount)) <
+  //   d3.sum(data.links.filter(d=>d.target.name===node).map(d=>d.unitCount))) {
+  //     linktoIncrease = data.links.filter(d=>d.source.name===node && d.units == d3.max(Array.from(data.links.filter(d=>d.source.name===node),d=>d.units)))
+  //     ++linktoIncrease[0].unitCount
+  //     console.log(linktoIncrease)
+  //   console.log("unit added to link with source"+ node)}
+  // }
+  
+
+
+  // console.log("level:" + level+ ". Sum current: "+ d3.sum(data.links.filter(d => d.level === level).map(d=>d.unitCount)) )
+
+
+//for every link in level i, sum the unitCount in level i-1. 
+// If sum unitCount in level i is <1, give the link with the highest probability 1 until it is.
+
+
+
+
+
+// console.log(targetArray)
+// console.log(targetArray.includes(nodeArray[1]))
+
+
 // var canvas = d3.select("canvas")
 //       .attr("width", width + margin.left + margin.right)
 //       .attr("height", height + margin.top + margin.bottom)
 //       // .append("g")
 //       // .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 var svg = d3.select("#barcharts"),
-    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    margin = {top: 20, right: 20, bottom: 250, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom
 
@@ -37,7 +104,12 @@ y.domain([0, inUnits]);
 g.append("g")
     .attr("class", "axis axis--x")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x));
+    .call(d3.axisBottom(x))
+    .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
 g.append("g")
     .attr("class", "axis axis--y")
@@ -50,15 +122,17 @@ g.append("g")
   //   .text("Frequency");
 
   //   // create the bars
-  var targetUnits = [{"node": nodeArray[0], "units": inUnits, "sColor": sankeyNodes.filter(b=>b.name===nodeArray[0])[0].x0}] 
+  var targetUnits = [{"node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b=>b.name===nodeArray[0])[0].x0}] 
   for (node of nodeArray.slice(1)) {
+    var terminal =  targetArray.includes(node) && !sourceArray.includes(node)
+
     var nodes = nodeG.data(sankeyNodes).enter().data()
-    console.log(nodes)
+    // console.log(nodes)
     sColor = nodes.filter(b=>b.name===node)[0].x0
-    targetUnits.push({"node": node, "units": 0, "sColor": sColor})
+    targetUnits.push({"node": node, "terminal": terminal, "units": 0, "sColor": sColor})
    }
-  console.log(targetUnits)
-  console.log("---------------")
+  // console.log(targetUnits)
+  // console.log("---------------")
   g.selectAll(".bar")
     .data(targetUnits)
     .enter().append("rect")
@@ -329,11 +403,14 @@ function updateCharts() {
   // var targetUnits = [{"node": nodeArray[0], "units": inUnits}]
   for (node of Array.from(data.nodes, d => d.name).slice(1)) {
     // targetUnits.push({ "node": node, "units": totalUnits.filter(d => d.link.target.name === node).length })
+    
+    // passes totalUnits count back to targetUnits for bar chart
     lookupTarget = targetUnits.find(p=>p.node==node) 
     lookupTarget.units = totalUnits.filter(d => d.link.target.name === node).length 
-  console.log(lookupTarget)
+  // console.log(lookupTarget)
   }
-
+  // console.log(targetUnits)
+  console.log("Total exiting system: "+d3.sum(targetUnits.filter(d=>d.terminal===true).map(d=>d.units)))
 
 
   
