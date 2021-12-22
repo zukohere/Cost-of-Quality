@@ -12,7 +12,7 @@
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:100i" rel="stylesheet">
 
-  <title>Sankey with circular links</title>
+  <title>Sankey Model for Cost of Quality</title>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -42,19 +42,21 @@
 
 canvas {
   position: absolute;
+  pointer-events: none;
 }
   </style>
 </head>
 
 <body>
 
-  <h1>Sankey with circular links</h1>
+  <h1>Sankey Model of Cost of Quality</h1>
 
   <div id = "sankey"> <canvas width="1000" height="1000" ></canvas>
-   <svg width="1000" height="1000" ></svg>
+    <svg width="1000" height="1000" ></svg>
   </div>
   <div id = "barcharts_div">
-    <svg id= "barcharts" width="1000" height="500"></svg>
+    <svg id= "barcharts" width="500" height="500"></svg>
+    <svg id= "piechart" width="500" height="500"></svg>
   </div>
   <script>
     
@@ -80,6 +82,9 @@ canvas {
         return d.name;
       })
       .nodeAlign(d3.sankeyCenter)
+      // .nodeAlign(d3.sankeyLeft)
+      // .nodeAlign(d3.sankeyRight)
+      // .nodeAlign(d3.sankeyJustify)
       .iterations(1);
       // console.log(sankey)
 
@@ -112,8 +117,17 @@ canvas {
 
     let depthExtent = d3.extent(sankeyNodes, function (d) { return d.depth; });
 
-    var nodeColour = d3.scaleSequential(d3.interpolateCool)
-    .domain([0,width]);
+    //Uses gradient to create node color
+    // var nodeColour = d3.scaleSequential(d3.interpolateCool)
+  //  .domain([0,width]);
+
+  //Creates color based on COQ components
+  const colorLookup = {"Prevention": "blue",
+  "Appraisal": "purple",
+  "Internal Failure": "orange",
+  "External Failure": "red",
+  "Shipping": "gray",
+  "End User": "green"}
 
     
     //Adjust link Y coordinates based on target/source Y positions
@@ -121,16 +135,22 @@ canvas {
     var node = nodeG.data(sankeyNodes)
       .enter()
       .append("g");
-      
+      console.log(node)
+    
+    
+
+
+
+
     node.append("rect")
       .attr("x", function (d) { return d.x0; })
       .attr("y", function (d) { return d.y0; })
       .attr("height", function (d) { return d.y1 - d.y0; })
       .attr("width", function (d) { return d.x1 - d.x0; })
-      .style("fill", function (d) { return( nodeColour(d.x0)); })
+      .style("fill", function (d) { return( colorLookup[d.COQ]); })
       .style("opacity", 0.5)
       .on("mouseover", function (d) {
-
+        
         let thisName = d.name;
 
         node.selectAll("rect")
@@ -149,9 +169,10 @@ canvas {
           })
       })
       .on("mouseout", function (d) {
-        d3.selectAll("rect").style("opacity", 0.5);
+        
+        node.selectAll("rect").style("opacity", 0.5);
         d3.selectAll(".sankey-link").style("opacity", 0.7);
-        d3.selectAll("text").style("opacity", 1);
+        node.selectAll("text").style("opacity", 1);
       })
 
     node.append("text")
@@ -161,8 +182,10 @@ canvas {
       .attr("text-anchor", "start")
       .text(function (d) { return d.name; });
 
-    node.append("title")
-      .text(function (d) { return d.name + "\n" + (d.value); });
+    // adds tooltip on hover over node rectangles.
+      node.append("title")
+      .text(function (d) { return d.name + "\n" + "$"+(d.cost)+"/unit"; });
+      console.log(node)
 
     var link = linkG.data(sankeyLinks)
       .enter()
@@ -174,7 +197,7 @@ canvas {
       .style("stroke-width", function (d) { return Math.max(1, d.width); })
       .style("opacity", 0.7)
       .style("stroke", function (link, i) {
-        return link.circular ? "red" : "black"
+        if (link.optimal==="yes") {return "black"} else {return "red"}
       })
     .attr("id", function (d) {return "path-"+d.level})
     
@@ -202,20 +225,20 @@ canvas {
     // let maxOffset = 10;
     // let percentageOffset = 1;
 
-    //https://stackoverflow.com/questions/35556876/javascript-repeat-a-function-x-amount-of-times
-    function runFunctionXTimes(callback, interval, repeatTimes) {
-    let repeated = 0;
-    const intervalTask = setInterval(doTask, interval)
+//     //https://stackoverflow.com/questions/35556876/javascript-repeat-a-function-x-amount-of-times
+//     function runFunctionXTimes(callback, interval, repeatTimes) {
+//     let repeated = 0;
+//     const intervalTask = setInterval(doTask, interval)
 
-    function doTask() {
-        if ( repeated < repeatTimes ) {
-            callback()
-            repeated += 1
-        } else {
-            clearInterval(intervalTask)
-        }
-    }
-} 
+//     function doTask() {
+//         if ( repeated < repeatTimes ) {
+//             callback()
+//             repeated += 1
+//         } else {
+//             clearInterval(intervalTask)
+//         }
+//     }
+// } 
   //
 
     // var animateDash = setInterval(updateDash, duration);
