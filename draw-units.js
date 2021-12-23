@@ -118,13 +118,14 @@ g.append("g")
   .call(d3.axisLeft(y).ticks(10))
 
 // var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b => b.name === nodeArray[0])[0].x0 }]
-var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ}]
+var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ, "sGorP": data.nodes.find(d=>d.name===nodeArray[0]).GorP}]
 for (nodeEx of nodeArray.slice(1)) {
   var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
 
   // sColor = sankeyNodes.filter(b => b.name === nodeEx)[0].x0
   sColor = data.nodes.find(d=>d.name===nodeEx).COQ
-  targetUnits.push({ "node": nodeEx, "terminal": terminal, "units": 0, "sColor": sColor })
+  sGorP = data.nodes.find(d=>d.name===nodeEx).GorP
+  targetUnits.push({ "node": nodeEx, "terminal": terminal, "units": 0, "unitCost": 0, "sColor": sColor, "sGorP": sGorP })
 }
 
 g.selectAll(".bar")
@@ -307,7 +308,9 @@ function updateCharts() {
   }
   
     console.log("Total exiting system: " + d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units)))
-
+    if (d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units))===inUnits) {
+      pieUnits = targetUnits
+    drawPie()}
   // update the bars
   g.selectAll(".bar")
     .data(targetUnits)

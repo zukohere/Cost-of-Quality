@@ -44,6 +44,27 @@ canvas {
   position: absolute;
   pointer-events: none;
 }
+
+/* pie chart css */
+.outer-label {
+  font-size: 12px;
+  /* fill: #ccc; */
+  text-align: center;
+}
+.center {
+  font-size: 18px;
+  text-transform: uppercase;
+  /* fill: #fff; */
+}
+path {
+  cursor: pointer;
+}
+
+/* @-webkit-keyframes scale-up {
+    from { @include transform(scale(0.95)); opacity: 0; }
+    to { @include transform(scale(1)); opacity: 1; }
+} */
+
   </style>
 </head>
 
@@ -56,7 +77,8 @@ canvas {
   </div>
   <div id = "barcharts_div">
     <svg id= "barcharts" width="500" height="500"></svg>
-    <svg id= "piechart" width="500" height="500"></svg>
+  </div>
+  <div id="graph-container">
   </div>
   <script>
     
@@ -122,7 +144,10 @@ canvas {
   //  .domain([0,width]);
 
   //Creates color based on COQ components
-  const colorLookup = {"Prevention": "blue",
+  const colorLookup = {
+  "COGQ": "DarkSeaGreen",
+  "COPQ": "LightCoral",
+  "Prevention": "blue",
   "Appraisal": "purple",
   "Internal Failure": "orange",
   "External Failure": "red",
@@ -282,6 +307,7 @@ canvas {
   </script>
   <!-- <script src="d3.sankey.js"></script> -->
   <script src="draw-units.js"></script>
+  <script src="drilldownpie.js"></script>
 </body>
 
 </html>
