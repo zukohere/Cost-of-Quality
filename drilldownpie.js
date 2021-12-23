@@ -1,3 +1,5 @@
+// inspired by https://codepen.io/danbrellis/pen/aEMGMp
+
 function drawPie() {
 
     var defVis = {};
@@ -7,13 +9,15 @@ function drawPie() {
 
         console.log(targetUnits)
 
-        var topLevelItem = { label: "CoQ" };
+        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(targetUnits.map(d=>d.unitCost)) };
 
         //   
         /// Design, Mfg, Inspect etc.
         //   var baseCats = [...new Set(Array.from(targetUnits, d => d.node))]
 
         var coqCats = [...new Set(Array.from(targetUnits, d => d.sColor))]
+        var GorPCats = [...new Set(Array.from(targetUnits, d => d.sGorP))]
+
         coqCatscount = {}
         for (cat of coqCats) { coqCatscount[cat] = 0 }
         var pieGrandchild = []
@@ -27,7 +31,13 @@ function drawPie() {
             coqCatscount[units.sColor]++
             console.log("brighter " +grandChildcolor)
         }
-        
+        catCostlookup = {}
+        for (cat of coqCats)
+            {catCostlookup[cat] = d3.sum(pieGrandchild.filter(d=>d.parentLabel === cat).map(d=>d.value))}
+
+        d3.sum(pieGrandchild.map(d=>d.value))
+        for (d of pieGrandchild)
+            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/catCostlookup[d.parentLabel])+"%)"}
 
 
 
@@ -39,14 +49,25 @@ function drawPie() {
             sGorP = targetUnits.filter(d => d.sColor === cat)[0].sGorP
             pieChild.push({ colorIndex: colorLookup[cat], value: totalCost, label: cat, parentLabel: sGorP, childData: pieGrandchild.filter(d => d.parentLabel === cat) })
         }
+        gorpCostlookup = {}
+        for (GorP of GorPCats) 
+            {gorpCostlookup[GorP] = d3.sum(pieChild.filter(d=>d.parentLabel === GorP).map(d=>d.value))}
+
+        d3.sum(pieChild.map(d=>d.value))
+        for (d of pieChild)
+            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/gorpCostlookup[d.parentLabel])+"%)"}
+
 
         // Cost of Good/Poor Quality
-        var GorPCats = [...new Set(Array.from(targetUnits, d => d.sGorP))]
+        
         var pieData = []
         for (GorP of GorPCats) {
             totalCost = d3.sum(targetUnits.filter(d => d.sGorP === GorP).map(d => d.unitCost))
             pieData.push({ colorIndex: colorLookup[GorP], value: totalCost, label: GorP, childData: pieChild.filter(d => d.parentLabel === GorP) })
         }
+        gorpCost = d3.sum(pieData.map(d=>d.value))
+        for (d of pieData)
+            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/gorpCost)+"%)"}
         console.log(pieData)
 
         //   var data = [
