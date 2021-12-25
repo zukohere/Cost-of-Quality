@@ -119,7 +119,7 @@ for (nodeEx of nodeArray.slice(1)) {
 }
 
 var svg = d3.select("#barcharts"),
-  margin = { top: 20, right: 20, bottom: 250, left: 100 },
+  margin = { top: 70, right: 20, bottom: 250, left: 100 },
   width = +svg.attr("width") - margin.left - margin.right,
   height = +svg.attr("height") - margin.top - margin.bottom
 
@@ -278,7 +278,7 @@ function tick(elapsed, time) {
       totalUnits = totalUnits.concat(particles)
       updateCharts()
       updateIndicator(targetUnits)
-      updateCOQ(targetUnits)
+      // updateCOQ(targetUnits)
     }
     level = level + 1
     

@@ -92,8 +92,8 @@ function drawPie(pieUnits) {
 
         //Global Variables
         var margin = 75,
-            width = 600,
-            height = 600,
+            width = 550,
+            height = 500,
             radius = 175;
 
         var transformAttrValue = function (adjustLeft) {
