@@ -1,6 +1,9 @@
 var thickness = 20
 
 let data2 = {
+    "unitSales": 1000000,
+    "copqGoal": 0.01,
+    "cogqGoal": 0.02,
     "nodes": [
       { "name": "Product Development", "index": 0, "cost": 100, "COQ": "Prevention", "GorP": "COGQ"},
       { "name": "Raw/Receiving Inspection", "index": 0, "cost": 100, "COQ": "Appraisal", "GorP": "COGQ"},

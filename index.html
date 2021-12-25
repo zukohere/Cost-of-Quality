@@ -68,6 +68,11 @@
       display: inline;
     }
 
+    #plotly_COQ,
+    #plotly_ind {
+      display: inline;
+    }
+
     /* @-webkit-keyframes scale-up {
     from { @include transform(scale(0.95)); opacity: 0; }
     to { @include transform(scale(1)); opacity: 1; }
@@ -78,7 +83,10 @@
 <body>
 
   <h1>Sankey Model of Cost of Quality</h1>
-  <div id=plotly_ind></div>
+  <div class="row">
+    <div class="col-md-6" id=plotly_COQ>  </div>
+    <div class="col-md-6"id=plotly_ind> </div>
+  </div>
   <div id="sankey"> <canvas width="1000" height="530"></canvas>
     <svg width="1000" height="100"></svg>
   </div>

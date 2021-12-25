@@ -278,6 +278,7 @@ function tick(elapsed, time) {
       totalUnits = totalUnits.concat(particles)
       updateCharts()
       updateIndicator(targetUnits)
+      updateCOQ(targetUnits)
     }
     level = level + 1
     
