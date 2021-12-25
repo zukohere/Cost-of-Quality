@@ -7,7 +7,7 @@ function drawPie(pieUnits) {
 
         console.log(pieUnits)
 
-        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(pieUnits.map(d=>d.unitCost)) };
+        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(pieUnits.map(d=>d.unitCost)).toLocaleString("en-US") };
 
         //   
         /// Design, Mfg, Inspect etc.
@@ -35,7 +35,7 @@ function drawPie(pieUnits) {
 
         d3.sum(pieGrandchild.map(d=>d.value))
         for (d of pieGrandchild)
-            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/catCostlookup[d.parentLabel])+"%)"}
+            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/catCostlookup[d.parentLabel])+"%)"}
 
 
 
@@ -53,7 +53,7 @@ function drawPie(pieUnits) {
 
         d3.sum(pieChild.map(d=>d.value))
         for (d of pieChild)
-            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/gorpCostlookup[d.parentLabel])+"%)"}
+            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/gorpCostlookup[d.parentLabel])+"%)"}
 
 
         // Cost of Good/Poor Quality
@@ -65,7 +65,7 @@ function drawPie(pieUnits) {
         }
         gorpCost = d3.sum(pieData.map(d=>d.value))
         for (d of pieData)
-            {d.label = d.label+ "($"+ d.value+", "+Math.round(100*d.value/gorpCost)+"%)"}
+            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/gorpCost)+"%)"}
         console.log(pieData)
 
         //   var data = [

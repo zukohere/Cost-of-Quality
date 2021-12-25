@@ -149,6 +149,15 @@ g.append("g")
 g.append("g")
   .attr("class", "axis axis--y")
   .call(d3.axisLeft(y).ticks(10))
+  .append("text")
+  .attr("class", "y-axis-title")
+  .attr("transform", "rotate(-90)")
+  .attr("x",-height/2)
+  .attr("y", -65)
+  .attr("dy", ".71em")
+  .style("text-anchor", "end")
+  .attr("fill", "black")
+  .text("(Cost in $)");
 
 // var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b => b.name === nodeArray[0])[0].x0 }]
 
@@ -268,6 +277,7 @@ function tick(elapsed, time) {
     if (particles.length > 0) {
       totalUnits = totalUnits.concat(particles)
       updateCharts()
+      updateIndicator(targetUnits)
     }
     level = level + 1
     
