@@ -1,27 +1,25 @@
 // inspired by https://codepen.io/danbrellis/pen/aEMGMp
-
-function drawPie() {
-
+function drawPie(pieUnits) {
     var defVis = {};
 
     (function (visualization) {
         visualization.donut = {};
 
-        console.log(targetUnits)
+        console.log(pieUnits)
 
-        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(targetUnits.map(d=>d.unitCost)) };
+        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(pieUnits.map(d=>d.unitCost)) };
 
         //   
         /// Design, Mfg, Inspect etc.
-        //   var baseCats = [...new Set(Array.from(targetUnits, d => d.node))]
+        //   var baseCats = [...new Set(Array.from(pieUnits, d => d.node))]
 
-        var coqCats = [...new Set(Array.from(targetUnits, d => d.sColor))]
-        var GorPCats = [...new Set(Array.from(targetUnits, d => d.sGorP))]
+        var coqCats = [...new Set(Array.from(pieUnits, d => d.sColor))]
+        var GorPCats = [...new Set(Array.from(pieUnits, d => d.sGorP))]
 
         coqCatscount = {}
         for (cat of coqCats) { coqCatscount[cat] = 0 }
         var pieGrandchild = []
-        for (units of targetUnits) {
+        for (units of pieUnits) {
             totalCost = units.unitCost
             sGorP = units.sGorP
             var grandChildcolor = d3.color(colorLookup[units.sColor])
@@ -45,8 +43,8 @@ function drawPie() {
 
         var pieChild = []
         for (cat of coqCats) {
-            totalCost = d3.sum(targetUnits.filter(d => d.sColor === cat).map(d => d.unitCost))
-            sGorP = targetUnits.filter(d => d.sColor === cat)[0].sGorP
+            totalCost = d3.sum(pieUnits.filter(d => d.sColor === cat).map(d => d.unitCost))
+            sGorP = pieUnits.filter(d => d.sColor === cat)[0].sGorP
             pieChild.push({ colorIndex: colorLookup[cat], value: totalCost, label: cat, parentLabel: sGorP, childData: pieGrandchild.filter(d => d.parentLabel === cat) })
         }
         gorpCostlookup = {}
@@ -62,7 +60,7 @@ function drawPie() {
         
         var pieData = []
         for (GorP of GorPCats) {
-            totalCost = d3.sum(targetUnits.filter(d => d.sGorP === GorP).map(d => d.unitCost))
+            totalCost = d3.sum(pieUnits.filter(d => d.sGorP === GorP).map(d => d.unitCost))
             pieData.push({ colorIndex: colorLookup[GorP], value: totalCost, label: GorP, childData: pieChild.filter(d => d.parentLabel === GorP) })
         }
         gorpCost = d3.sum(pieData.map(d=>d.value))
@@ -434,7 +432,7 @@ function drawPie() {
             if (selectedPath.length === 0) {
                 return topLevelItem;
             }
-            var currentItem = data;
+            var currentItem = donutdata;
             for (var i = 0; i < selectedPath.length; i++) {
                 if (i + 1 < selectedPath.length) {
                     currentItem = currentItem[selectedPath[i]].childData;
@@ -463,7 +461,7 @@ function drawPie() {
 
         function getCurrentItemData(minusIndex) {
             minusIndex = minusIndex | 0;
-            var currentItem = data;
+            var currentItem = donutdata;
 
             for (var i = 0; i < selectedPath.length - minusIndex; i++) {
                 currentItem = currentItem[selectedPath[i]].childData
@@ -503,7 +501,7 @@ function drawPie() {
         visualization.donut.show = function () {
             var svgContainer = d3.select("#graph-container");
             svgContainer.html("");
-            data = dataOriginal.slice(0);
+            donutdata = dataOriginal.slice(0);
             selectedPath = [];
             selectedPathColors = [];
 
@@ -557,7 +555,7 @@ function drawPie() {
                 .sort(null);
 
 
-            path = drawPrimaryPaths(data);
+            path = drawPrimaryPaths(donutdata);
 
             updatePieLabels();
 

@@ -77,16 +77,47 @@ nodeArray = Array.from(data.nodes, d => d.name)
 sourceArray = [...new Set(Array.from(data.links, d => d.source.name))]
 targetArray = [...new Set(Array.from(data.links, d => d.target.name))]
 // console.log(data.links)
-for (nodeEx of sourceArray) {
+
+nodeUnits = {}
+for (nodeEx of targetArray) {
   unitsIn = d3.sum(data.links.filter(d => d.target.name === nodeEx).map(d => d.unitCount))
   unitsOut = d3.sum(data.links.filter(d => d.source.name === nodeEx).map(d => d.unitCount))
   probSum = d3.sum(data.links.filter(d => d.source.name === nodeEx).map(d => d.units))
   console.log("node:" + nodeEx + " probSum: " + probSum + " units in:" + unitsIn + " units out:" + unitsOut)
+  nodeUnits[nodeEx] = unitsIn
 }
 
 ///////////////// End Rounding Error /////////////
 
+//// Set up Pie Chart
+pieUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ, "sGorP": data.nodes.find(d=>d.name===nodeArray[0]).GorP}]
+for (nodeEx of nodeArray.slice(1)) {
+  var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+
+  // sColor = sankeyNodes.filter(b => b.name === nodeEx)[0].x0
+  sColor = data.nodes.find(d=>d.name===nodeEx).COQ
+  sGorP = data.nodes.find(d=>d.name===nodeEx).GorP
+  sUnits = nodeUnits[nodeEx]
+  sunitCost = data.nodes.find(d=>d.name===nodeEx).cost * sUnits
+  pieUnits.push({ "node": nodeEx, "terminal": terminal, "units": sUnits, "unitCost": sunitCost, "sColor": sColor, "sGorP": sGorP })
+}
+console.log("pieUnits")
+console.log(pieUnits)
+// drawPie(pieUnits)
+data = data2
+///// End set up pie chart
+
+
 //// Begin Unit Count Bar Chart ////////////
+var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ, "sGorP": data.nodes.find(d=>d.name===nodeArray[0]).GorP}]
+for (nodeEx of nodeArray.slice(1)) {
+  var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+
+  sColor = data.nodes.find(d=>d.name===nodeEx).COQ
+  sGorP = data.nodes.find(d=>d.name===nodeEx).GorP
+  targetUnits.push({ "node": nodeEx, "terminal": terminal, "units": 0, "unitCost": 0, "sColor": sColor, "sGorP": sGorP })
+}
+
 var svg = d3.select("#barcharts"),
   margin = { top: 20, right: 20, bottom: 250, left: 100 },
   width = +svg.attr("width") - margin.left - margin.right,
@@ -98,9 +129,11 @@ var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
 var g = svg.append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 // set the domains of the axes
-x.domain(data.nodes.map(function (d) { return d.name; }));
-// y.domain([0, d3.max(data.nodes.map(d=>d.cost))*inUnits]);
-y.domain([0, inUnits]);
+x.domain(targetUnits.map(function (d) { return d.node; }));
+y.domain([0, d3.max(targetUnits.map(d=>d.unitCost))]);
+// y.domain([0, inUnits]);
+
+
 
 // add the svg elements
 g.append("g")
@@ -118,24 +151,16 @@ g.append("g")
   .call(d3.axisLeft(y).ticks(10))
 
 // var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b => b.name === nodeArray[0])[0].x0 }]
-var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ, "sGorP": data.nodes.find(d=>d.name===nodeArray[0]).GorP}]
-for (nodeEx of nodeArray.slice(1)) {
-  var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
 
-  // sColor = sankeyNodes.filter(b => b.name === nodeEx)[0].x0
-  sColor = data.nodes.find(d=>d.name===nodeEx).COQ
-  sGorP = data.nodes.find(d=>d.name===nodeEx).GorP
-  targetUnits.push({ "node": nodeEx, "terminal": terminal, "units": 0, "unitCost": 0, "sColor": sColor, "sGorP": sGorP })
-}
 
 g.selectAll(".bar")
   .data(targetUnits)
   .enter().append("rect")
   .attr("class", "bar")
   .attr("x", function (d) { return x(d.node); })
-  .attr("y", function (d) { return y(d.units); })
+  .attr("y", function (d) { return y(d.unitCost); })
   .attr("width", x.bandwidth())
-  .attr("height", function (d) { return height - y(d.units); })
+  .attr("height", function (d) { return height - y(d.unitCost); })
   .style("fill", function (d) { return colorLookup[d.sColor] })
   // .style("fill", function (d) { return nodeColour(d.sColor) })
   .style("opacity", 0.5);
@@ -147,29 +172,20 @@ g.selectAll(".text")
   .append("text")
   .attr("class", "label")
   .text(function (d) {
-    return d.units;
+    return d.unitCost;
   })
   .attr("x", function (d) {
     return x(d.node) + x.bandwidth() / 2;
   })
   .attr("y", function (d) {
-    return y(d.units) - 5;
+    return y(d.unitCost) - 5;
   })
   .attr("font-family", "sans-serif")
   .attr("font-size", "14px")
   .attr("fill", "black")
   .attr("text-anchor", "middle");
 ///////////////////////////// End Unit Bar Chart
-
-
-///////////////////////////// Pie Chart
-
-
-
-
-
-
-///////////////////////////// End Pie Chart
+drawPie(pieUnits)
 
 
 //////////// Additional Sankey/Particle Setup ///////////////////
@@ -308,30 +324,38 @@ function updateCharts() {
   }
   
     console.log("Total exiting system: " + d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units)))
-    if (d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units))===inUnits) {
-      pieUnits = targetUnits
-    drawPie()}
+    // if (d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units))===inUnits) {
+      // pieUnits = targetUnits
+    // drawPie()
+  // }
   // update the bars
+  y.domain([0, d3.max(targetUnits.map(d=>d.unitCost))]);
+  d3.selectAll(".axis").filter(".axis--y")
+  .data(targetUnits)
+  .transition().duration(1000)
+  .call(d3.axisLeft(y).ticks(10))
+  
+
   g.selectAll(".bar")
     .data(targetUnits)
     .transition().duration(1000)
     .attr("class", "bar")
     .attr("x", function (d) { return x(d.node); })
-    .attr("y", function (d) { return y(d.units); })
+    .attr("y", function (d) { return y(d.unitCost); })
     .attr("width", x.bandwidth())
-    .attr("height", function (d) { return height - y(d.units) });
+    .attr("height", function (d) { return height - y(d.unitCost) });
 
   g.selectAll(".label")
     .data(targetUnits)
     .transition().duration(1000)
     .text(function (d) {
-      return d.units;
+      return d.unitCost;
     })
     .attr("x", function (d) {
       return x(d.node) + x.bandwidth() / 2;
     })
     .attr("y", function (d) {
-      return y(d.units) - 5;
+      return y(d.unitCost) - 5;
     })
-
+  
 }
