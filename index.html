@@ -2,21 +2,22 @@
 <html>
 
 <head>
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="d3-sankey-circular.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="example-data.js"></script>
+  <script src="d3-tip.js"></script>
 
 
 
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100i" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:100i" rel="stylesheet"> -->
 
   <title>Sankey Model for Cost of Quality</title>
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: monospace;
       /*background: #E3D4C1;*/
       /*background: #000;*/
     }
@@ -31,6 +32,12 @@
       /*font-family: 'Roboto', sans-serif;*/
       font-family: monospace;
       /*fill: white;*/
+    }
+    .plotlytitles {
+      font-size: 16px;
+      font-family: monospace;
+      color: black
+
     }
 
     .link {
@@ -48,8 +55,9 @@
 
     /* pie chart css */
     .outer-label {
+      color: rgba(0, 0, 0, 0.8);
       font-size: 12px;
-      /* fill: #ccc; */
+      font-family: monospace;
       text-align: center;
     }
 
@@ -73,6 +81,17 @@
       display: inline;
     }
 
+    .d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: cornsilk;
+      color: rgba(0, 0, 0, 0.8);
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    
     /* @-webkit-keyframes scale-up {
     from { @include transform(scale(0.95)); opacity: 0; }
     to { @include transform(scale(1)); opacity: 1; }
@@ -84,25 +103,31 @@
 
   <h1>Sankey Model of Cost of Quality</h1>
 
-  <div id="sankey"> <canvas width="1000" height="530"></canvas>
-    <svg width="1000" height="100"></svg>
-  </div>
+
   <div id="block container">
-
-
-    <div class="container">
-      <div class="row">
-        <div class="col-md">
-          <div id=plotly_COQ> </div>
-        </div>
-        <div class="col-md">
-          <div id=plotly_ind> </div>
-        </div>
-      </div>
+    <div id="sankey"> <canvas width="1000" height="530"></canvas>
+      <svg width="1000" height="100"></svg>
     </div>
+
+    <svg id="Bullet_titles" width="1000" height="20"></svg>
+      <!-- <div class="row">
+        <div class="col-md-5">
+          <div id="defectBullet_title" class="plotlytitles">
+            <center><u>Defective Unit Counter</u></center>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div id="coqBullet_title" class="plotlytitles">
+            <center><u>Cost of Quality (COQ) as % of Net Sales</u></center>
+          </div>
+        </div>
+      </div>-->
+      <div id=plotly_COQ> </div>
+
+    
     <!-- <div class="col"> -->
     <div id="barcharts_div">
-      <svg id="barcharts" width="500" height="500"></svg>
+      <svg id="barcharts" width="530" height="500"></svg>
       <svg id="graph-container" width="400" height="500"></svg>
     </div>
 

@@ -193,6 +193,25 @@ g.selectAll(".text")
   .attr("font-size", "14px")
   .attr("fill", "black")
   .attr("text-anchor", "middle");
+
+  var tool_tip = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([50, 0])
+  .html("I'm a tool tip!");
+  svg.call(tool_tip);
+
+  g.append("g")
+  .append("text")
+  .attr("x", (width / 2-40))             
+  .attr("y", 0 - (margin.top / 2))
+  .attr("text-anchor", "middle")  
+  .style("font-size", "16px") 
+  .style("text-decoration", "underline")  
+  .text("Costs per Process Step")
+  .on('mouseover', tool_tip.show)
+      .on('mouseout', tool_tip.hide);
+  
+  
 ///////////////////////////// End Unit Bar Chart
 drawPie(pieUnits)
 

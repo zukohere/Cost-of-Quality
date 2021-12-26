@@ -7,7 +7,7 @@ function drawPie(pieUnits) {
 
         console.log(pieUnits)
 
-        var topLevelItem = { label: "CoQ " + "$"+ d3.sum(pieUnits.map(d=>d.unitCost)).toLocaleString("en-US") };
+        var topLevelItem = { label: ["CoQ", "($" + d3.sum(pieUnits.map(d => d.unitCost)).toLocaleString("en-US")+")" ]};
 
         //   
         /// Design, Mfg, Inspect etc.
@@ -23,19 +23,17 @@ function drawPie(pieUnits) {
             totalCost = units.unitCost
             sGorP = units.sGorP
             var grandChildcolor = d3.color(colorLookup[units.sColor])
-            console.log("orig " +grandChildcolor)
+            console.log("orig " + grandChildcolor)
             grandChildcolor = grandChildcolor.brighter(50 * coqCatscount[units.sColor])
-            pieGrandchild.push({ colorIndex: d3.rgb(colorLookup[units.sColor]).darker(1.05*coqCatscount[units.sColor]), value: totalCost, label: units.node, parentLabel: units.sColor })
+            pieGrandchild.push({ colorIndex: d3.rgb(colorLookup[units.sColor]).darker(1.05 * coqCatscount[units.sColor]), value: totalCost, label: units.node, parentLabel: units.sColor })
             coqCatscount[units.sColor]++
-            console.log("brighter " +grandChildcolor)
+            console.log("brighter " + grandChildcolor)
         }
         catCostlookup = {}
-        for (cat of coqCats)
-            {catCostlookup[cat] = d3.sum(pieGrandchild.filter(d=>d.parentLabel === cat).map(d=>d.value))}
+        for (cat of coqCats) { catCostlookup[cat] = d3.sum(pieGrandchild.filter(d => d.parentLabel === cat).map(d => d.value)) }
 
-        d3.sum(pieGrandchild.map(d=>d.value))
-        for (d of pieGrandchild)
-            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/catCostlookup[d.parentLabel])+"%)"}
+        d3.sum(pieGrandchild.map(d => d.value))
+        for (d of pieGrandchild) { d.label = [d.label, "($" + d.value.toLocaleString("en-US") + "; " + Math.round(100 * d.value / catCostlookup[d.parentLabel]) + "%)" ]}
 
 
 
@@ -48,24 +46,21 @@ function drawPie(pieUnits) {
             pieChild.push({ colorIndex: colorLookup[cat], value: totalCost, label: cat, parentLabel: sGorP, childData: pieGrandchild.filter(d => d.parentLabel === cat) })
         }
         gorpCostlookup = {}
-        for (GorP of GorPCats) 
-            {gorpCostlookup[GorP] = d3.sum(pieChild.filter(d=>d.parentLabel === GorP).map(d=>d.value))}
+        for (GorP of GorPCats) { gorpCostlookup[GorP] = d3.sum(pieChild.filter(d => d.parentLabel === GorP).map(d => d.value)) }
 
-        d3.sum(pieChild.map(d=>d.value))
-        for (d of pieChild)
-            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/gorpCostlookup[d.parentLabel])+"%)"}
+        d3.sum(pieChild.map(d => d.value))
+        for (d of pieChild) { d.label = [d.label, "($" + d.value.toLocaleString("en-US") + "; " + Math.round(100 * d.value / gorpCostlookup[d.parentLabel]) + "%)" ]}
 
 
         // Cost of Good/Poor Quality
-        
+
         var pieData = []
         for (GorP of GorPCats) {
             totalCost = d3.sum(pieUnits.filter(d => d.sGorP === GorP).map(d => d.unitCost))
             pieData.push({ colorIndex: colorLookup[GorP], value: totalCost, label: GorP, childData: pieChild.filter(d => d.parentLabel === GorP) })
         }
-        gorpCost = d3.sum(pieData.map(d=>d.value))
-        for (d of pieData)
-            {d.label = d.label+ "($"+ d.value.toLocaleString("en-US")+", "+Math.round(100*d.value/gorpCost)+"%)"}
+        gorpCost = d3.sum(pieData.map(d => d.value))
+        for (d of pieData) { d.label = [d.label, "($" + d.value.toLocaleString("en-US") + "; " + Math.round(100 * d.value / gorpCost) + "%)"] }
         console.log(pieData)
 
         //   var data = [
@@ -92,10 +87,13 @@ function drawPie(pieUnits) {
 
         //Global Variables
         d3.select("#graph-container")
-        var margin = 50,
-        width = +svg.attr("width"),
-        height = +svg.attr("height")
-            radius = 175;
+        var width = +svg.attr("width"),
+            height = +svg.attr("height")
+            margin = 100,
+        radius = 100;
+
+
+
 
         var transformAttrValue = function (adjustLeft) {
             var leftValue = margin + radius;
@@ -190,10 +188,12 @@ function drawPie(pieUnits) {
                             return 2 * Math.PI;
                         })
                         .innerRadius(function (i) {
-                            return radius * 1.25;//radius;
+                            return radius * 2;//radius;
                         })
                         .outerRadius(function (o) {
-                            return (radius * 1.1) + (((radius * 1.25) - (radius - 20)) / 1.75);
+                            return (radius * 1.1) + (((radius*2)-(radius-40 ) ) / 1.75);
+            //  // curOuterRadius = origOuterRadius + ((curInnerRadius - origInnerRadius) / 1.75)
+            
                         });
 
                     var newOuterParentData = pie(getCurrentItemData(1));
@@ -362,15 +362,16 @@ function drawPie(pieUnits) {
 
         function zoomZeArc(selectedItem, reverse, callback) {
             //set sizing for outer arc
-            var zoomScale = 1.25,
+            var zoomScale = 2,
                 origOuterRadius = radius * 1.1,
-                origInnerRadius = radius - 20;
+                origInnerRadius = radius - 40;
+                
 
             var finalInnerRadius = radius * zoomScale;
 
             var curInnerRadius = origInnerRadius,
                 curOuterRadius = origOuterRadius;
-
+            
             var arcZoom = d3.arc()
                 .startAngle(0)
                 .endAngle(2 * Math.PI)
@@ -380,7 +381,7 @@ function drawPie(pieUnits) {
                 .innerRadius(function () {
                     return (curInnerRadius);
                 });
-
+            
             //zooming in, so add 'zoom-out' class
             if (!reverse) {
                 selectedItem.attr("class", "zoom-out");
@@ -392,7 +393,9 @@ function drawPie(pieUnits) {
                 .duration(750)
                 .attrTween("d", function () {
                     var iInner = reverse ? d3.interpolate(finalInnerRadius, origInnerRadius) : d3.interpolate(origInnerRadius, finalInnerRadius);
+                    
                     return function (tick) {
+                        console.log("hi")
                         curInnerRadius = iInner(tick);
                         curOuterRadius = origOuterRadius + ((curInnerRadius - origInnerRadius) / 1.75);
                         return arcZoom(selectedItem);
@@ -403,11 +406,13 @@ function drawPie(pieUnits) {
                         callback();
                     }
                 });
+                
         }
 
         function updatePieLabels() {
 
-            chartCenterLabel.text(getCurrentItem().label);
+            chartCenterLabelCat.text(getCurrentItem().label[0]);
+            chartCenterLabelVal.text(getCurrentItem().label[1]);
 
             chartLabelsGroup.html("");
 
@@ -419,15 +424,35 @@ function drawPie(pieUnits) {
                 .append("text")
                 .style("opacity", 0)
                 .transition().duration(750)
-                .style("opacity", 1)
+                .style("opacity", 0.75)
+                .style("background-color", "black")
                 .attr("class", "outer-label")
+                // .attr("text-anchor", "end")
                 .attr('transform', function (d) {
-                    return "translate(" + arcSmall.centroid(d) + ")";
+                    return "translate(" + arcSmall.centroid(d) + ")"
                 })
+                .attr("dy", "0em")
                 .text(function (d, i) {
-                    return currentData[i].label;
-                });
-        }
+                    return currentData[i].label[0];
+                })
+                sliceLabels
+                .enter()
+                .append("text")
+                .style("opacity", 0)
+                .transition().duration(750)
+                .style("opacity", 0.75)
+                .style("background-color", "black")
+                .attr("class", "outer-label")
+                // .attr("text-anchor", "end")
+                .attr('transform', function (d) {
+                    return "translate(" + arcSmall.centroid(d) + ")"
+                })
+                .attr("dy", "1em")
+                .text(function (d, i) {
+                    return currentData[i].label[1];
+                })
+        
+                }
 
         function getCurrentItem() {
             if (selectedPath.length === 0) {
@@ -530,9 +555,14 @@ function drawPie(pieUnits) {
                 .attr("transform", transformAttrValue())
                 .style("text-transform", "uppercase");
 
-            chartCenterLabel = chartCenterLabelGroup
+            chartCenterLabelCat = chartCenterLabelGroup
                 .append("text")
                 .attr('dy', '.35em')
+                .attr('class', 'chartLabel center')
+                .attr('text-anchor', 'middle');
+            chartCenterLabelVal = chartCenterLabelGroup
+                .append("text")
+                .attr('dy', '1.5em')
                 .attr('class', 'chartLabel center')
                 .attr('text-anchor', 'middle');
 
@@ -541,8 +571,8 @@ function drawPie(pieUnits) {
                 .innerRadius(radius - 20);
 
             arcSmall = d3.arc()
-                .outerRadius(radius - 70)
-                .innerRadius(radius - 80);
+            .outerRadius(radius)
+                .innerRadius(radius+60);
 
             // Arc Interaction Sizing
             arcOver = d3.arc()
@@ -563,6 +593,24 @@ function drawPie(pieUnits) {
             chartSelect = pieSVG.append('g')
                 .attr('class', 'secondary')
                 .attr("transform", transformAttrValue());
+
+
+            var tool_tip = d3.tip()
+                .attr("class", "d3-tip")
+                .offset([50, 0])
+                .html("I'm a tool tip!");
+            svg.call(tool_tip);
+
+            pieSVG.append("g")
+                .append("text")
+                .attr("x", (width / 2.5))
+                .attr("y", (margin/ 2.75))
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text("Cost of Quality Drilldown")
+                .on('mouseover', tool_tip.show)
+                .on('mouseout', tool_tip.hide);
         };
 
         return visualization;
