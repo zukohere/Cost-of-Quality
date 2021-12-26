@@ -1,6 +1,7 @@
 var thickness = 20
 
 let data2 = {
+    "inUnits": 50,
     "unitSales": 10000,
     "copqGoal": 0.01,
     "cogqGoal": 0.02,

@@ -86,7 +86,7 @@ function drawPie(pieUnits) {
         }
 
         //Global Variables
-        d3.select("#graph-container")
+        var svg = d3.select("#graph-container")
         var width = +svg.attr("width"),
             height = +svg.attr("height")
             margin = 100,

@@ -1,5 +1,6 @@
 //////// Good/Defective Indicators
-
+function drawIndicators(pieUnits) {
+  inUnits = data.inUnits
 var indicData = [
   {
     type: "indicator",
@@ -140,26 +141,6 @@ var layout_COQ = {
 };
 Plotly.newPlot('plotly_COQ', combinedData, layout_COQ, config_COQ);
 
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-function updateIndicator(unitInidcator) {
-
-  defectUnits = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ" && d.terminal === true).map(d => d.units))
-  goodUnits = inUnits - defectUnits
-
-  // Plotly.restyle(d3.selectAll("#plotly_ind").node(), "value", [])
-
-  // targetUnits structure [{ "node", "terminal", "units", "unitCost", "sColor", "sGorP"}]
-  indCOPQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ").map(d => d.unitCost)) / netSales
-  indCOGQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COGQ").map(d => d.unitCost)) / netSales
-  indCOQ = (indCOPQ + indCOGQ)
-  console.log("indCOQ: " + indCOQ)
-  Plotly.restyle(d3.selectAll("#plotly_COQ").node(), "value", [goodUnits, defectUnits, indCOPQ, indCOGQ, indCOQ])
-
-}
 /////// Defect Bullet tips
 svg = d3.select("#Bullet_titles")
 var tool_tip = d3.tip()
@@ -197,3 +178,25 @@ svg.append("g")
   .text("Cost of Quality (COQ) as % of Net Sales")
   .on('mouseover', tool_tip1.show)
   .on('mouseout', tool_tip1.hide);
+
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+function updateIndicator(unitInidcator) {
+
+  defectUnits = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ" && d.terminal === true).map(d => d.units))
+  goodUnits = inUnits - defectUnits
+
+  // Plotly.restyle(d3.selectAll("#plotly_ind").node(), "value", [])
+
+  // targetUnits structure [{ "node", "terminal", "units", "unitCost", "sColor", "sGorP"}]
+  indCOPQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ").map(d => d.unitCost)) / netSales
+  indCOGQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COGQ").map(d => d.unitCost)) / netSales
+  indCOQ = (indCOPQ + indCOGQ)
+  console.log("indCOQ: " + indCOQ)
+  Plotly.restyle(d3.selectAll("#plotly_COQ").node(), "value", [goodUnits, defectUnits, indCOPQ, indCOGQ, indCOQ])
+
+}

@@ -40,9 +40,227 @@
 // d3.event.preventDefault();
 ////clear svg
 //d3.selectAll("svg > *").remove();
+function drawUnits(data){
+// data = data2
+ // var margin = { top: 150, right: 100, bottom: 130, left: 120 };
+ var margin = { top: 0, right: 100, bottom: 50, left: 0 };
+ var width = 1000;
+ var height = 300;
 
-data = data2
+//  let data = data2;
 
+ const nodePadding = 40;
+
+ const circularLinkGap = 2;
+
+
+ var sankey = d3.sankey()
+   .nodeWidth(10)
+   .nodePadding(nodePadding)
+   .nodePaddingRatio(0.9)
+   .scale(0.5)
+   .size([width, height])
+   .nodeId(function (d) {
+     return d.name;
+   })
+   .nodeAlign(d3.sankeyCenter)
+   // .nodeAlign(d3.sankeyLeft)
+   // .nodeAlign(d3.sankeyRight)
+   // .nodeAlign(d3.sankeyJustify)
+   .iterations(1);
+ // console.log(sankey)
+
+ // var svg = d3.select("#chart").append("svg")
+
+
+ var svg = d3.select("#sankey").select("svg")
+   .attr("width", width + margin.left + margin.right)
+   .attr("height", height + margin.top + margin.bottom);
+
+ var g = svg.append("g")
+   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+ var linkG = g.append("g")
+   .attr("class", "links")
+   .attr("fill", "none")
+   .attr("stroke-opacity", 0.2)
+   .selectAll("path");
+
+ var nodeG = g.append("g")
+   .attr("class", "nodes")
+   .attr("font-family", "sans-serif")
+   .attr("font-size", 10)
+   .selectAll("g");
+
+ //run the Sankey + circular over the data
+ let sankeyData = sankey(data);
+ let sankeyNodes = sankeyData.nodes;
+ let sankeyLinks = sankeyData.links;
+
+ let depthExtent = d3.extent(sankeyNodes, function (d) { return d.depth; });
+
+ //Uses gradient to create node color
+ // var nodeColour = d3.scaleSequential(d3.interpolateCool)
+ //  .domain([0,width]);
+
+//  //Creates color based on COQ components
+//  const colorLookup = {
+//    "COGQ": "DarkSeaGreen",
+//    "COPQ": "LightCoral",
+//    "Prevention": "blue",
+//    "Appraisal": "purple",
+//    "Internal Failure": "orange",
+//    "External Failure": "red",
+//    "Shipping": "gray",
+//    "End User": "green"
+//  }
+
+
+ //Adjust link Y coordinates based on target/source Y positions
+
+ var node = nodeG.data(sankeyNodes)
+   .enter()
+   .append("g");
+ console.log(node)
+
+
+
+
+
+
+ node.append("rect")
+   .attr("x", function (d) { return d.x0; })
+   .attr("y", function (d) { return d.y0; })
+   .attr("height", function (d) { return d.y1 - d.y0; })
+   .attr("width", function (d) { return d.x1 - d.x0; })
+   .style("fill", function (d) { return (colorLookup[d.COQ]); })
+   .style("opacity", 0.5)
+   .on("mouseover", function (d) {
+
+     let thisName = d.name;
+
+     node.selectAll("rect")
+       .style("opacity", function (d) {
+         return highlightNodes(d, thisName)
+       })
+
+     d3.selectAll(".sankey-link")
+       .style("opacity", function (l) {
+         return l.source.name == thisName || l.target.name == thisName ? 1 : 0.3;
+       })
+
+     node.selectAll("text")
+       .style("opacity", function (d) {
+         return highlightNodes(d, thisName)
+       })
+   })
+   .on("mouseout", function (d) {
+
+     node.selectAll("rect").style("opacity", 0.5);
+     d3.selectAll(".sankey-link").style("opacity", 0.7);
+     node.selectAll("text").style("opacity", 1);
+   })
+
+ node.append("text")
+   .attr("x", function (d) { return (d.x0 + d.x1) / 2; })
+   .attr("y", function (d) { return d.y0 - 12; })
+   .attr("dy", "0.35em")
+   .attr("text-anchor", "start")
+   .text(function (d) { return d.name; });
+
+ // adds tooltip on hover over node rectangles.
+ node.append("title")
+   .text(function (d) { return d.name + "\n" + "$" + (d.cost) + "/unit"; });
+ console.log(node)
+
+ var link = linkG.data(sankeyLinks)
+   .enter()
+   .append("g")
+
+ link.append("path")
+   .attr("class", "sankey-link")
+   .attr("d", sankeyPath)
+   .style("stroke-width", function (d) { return Math.max(1, d.width); })
+   .style("opacity", 0.7)
+   .style("stroke", function (link, i) {
+     if (link.optimal === "yes") { return "black" } else { return "red" }
+   })
+   .attr("id", function (d) { return "path-" + d.level })
+
+
+ link.append("title")
+   .text(function (d) {
+     return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
+   });
+
+
+ //ARROWS
+ // var arrowsG = linkG.data(sankeyLinks)
+ //   .enter()
+ //   .append("g")
+ //   .attr("class", "g-arrow")
+ //   .call(appendArrows, 10, 10, 4) //arrow length, gap, arrow head size
+
+ // arrowsG.selectAll("path")
+ //   .style("stroke-width", "10")
+ //   //.style("stroke-dasharray", "10,10")
+
+ //   arrowsG.selectAll(".arrow-head").remove()
+
+ // let duration = 5
+ // let maxOffset = 10;
+ // let percentageOffset = 1;
+
+ //     //https://stackoverflow.com/questions/35556876/javascript-repeat-a-function-x-amount-of-times
+ //     function runFunctionXTimes(callback, interval, repeatTimes) {
+ //     let repeated = 0;
+ //     const intervalTask = setInterval(doTask, interval)
+
+ //     function doTask() {
+ //         if ( repeated < repeatTimes ) {
+ //             callback()
+ //             repeated += 1
+ //         } else {
+ //             clearInterval(intervalTask)
+ //         }
+ //     }
+ // } 
+ //
+
+ // var animateDash = setInterval(updateDash, duration);
+ // runFunctionXTimes(updateDash,duration,5)
+
+
+ // function updateDash() {
+
+ //   arrowsG.selectAll("path")
+ //   .style("stroke-dashoffset", percentageOffset * maxOffset)
+
+ //   percentageOffset = percentageOffset == 0 ? 1 : percentageOffset - 0.01
+ //   // percentageOffset = percentageOffset == 0.5 
+ // }
+
+ function highlightNodes(node, name) {
+
+   let opacity = 0.3
+
+   if (node.name == name) {
+     opacity = 1;
+   }
+   node.sourceLinks.forEach(function (link) {
+     if (link.target.name == name) {
+       opacity = 1;
+     };
+   })
+   node.targetLinks.forEach(function (link) {
+     if (link.source.name == name) {
+       opacity = 1;
+     };
+   })
+
+   return opacity;
+
+ }
 
 ////////////////////////////////// Begin Remove Rounding Error from particles ///////////////////////
 function getRandomIntInclusive(min, max) {
@@ -51,7 +269,7 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
 
-const inUnits = 50
+const inUnits = data.inUnits
 
 for (level of [...new Set(Array.from(data.links, d => d.level))]) {
   links = data.links.filter(d => d.level === level)
@@ -107,6 +325,8 @@ console.log(pieUnits)
 data = data2
 ///// End set up pie chart
 
+//// Pass pie data to Indicators and draw.
+drawIndicators(pieUnits)
 
 //// Begin Unit Count Bar Chart ////////////
 var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits*data.nodes.find(d=>d.name===nodeArray[0]).cost, "sColor": data.nodes.find(d=>d.name===nodeArray[0]).COQ, "sGorP": data.nodes.find(d=>d.name===nodeArray[0]).GorP}]
@@ -283,7 +503,9 @@ data.links.forEach(function (link) {
 })
 
 
-var t = d3.timer(tick, 1000);
+let t = d3.interval(elapsed=> {tick(elapsed);
+   if (d3.select("#killData").node().value==="stoptime") {t.stop()}});
+
 var particles = [];
 var totalUnits = []
 levels = [...new Set(Array.from(data.links, d => d.level))]
@@ -291,13 +513,15 @@ levels = [...new Set(Array.from(data.links, d => d.level))]
 level = -1
 
 function tick(elapsed, time) {
+  
+  // console.log(elapsed)
   if (particles.filter(d => d.current < d.length).length === 0) {
 
     if (particles.length > 0) {
       totalUnits = totalUnits.concat(particles)
       updateCharts()
       updateIndicator(targetUnits)
-      // updateCOQ(targetUnits)
+      
     }
     level = level + 1
     
@@ -330,14 +554,14 @@ function particleEdgeCanvasPath(elapsed) {
 
   context.fillStyle = "gray";
   context.lineWidth = "1px";
-  for (var x in particles) {
-    var currentTime = elapsed - particles[x].time;
-    particles[x].current = currentTime * 0.15 * particles[x].speed;
+  for (ind in particles) {
+    var currentTime = elapsed - particles[ind].time;
+    particles[ind].current = currentTime * 0.15 * particles[ind].speed;
   
-    var currentPos = particles[x].path.getPointAtLength(particles[x].current);
+    var currentPos = particles[ind].path.getPointAtLength(particles[ind].current);
     context.beginPath();
-    if (particles[x].link.optimal === "no") {context.fillStyle= "red"} else {context.fillStyle= "green"}
-    context.arc(currentPos.x, currentPos.y + particles[x].offset, particles[x].link.particleSize, 0, 2 * Math.PI);
+    if (particles[ind].link.optimal === "no") {context.fillStyle= "red"} else {context.fillStyle= "green"}
+    context.arc(currentPos.x, currentPos.y + particles[ind].offset, particles[ind].link.particleSize, 0, 2 * Math.PI);
     context.fill();
   }
 }
@@ -388,4 +612,5 @@ function updateCharts() {
       return y(d.unitCost) - 5;
     })
   
+}
 }
