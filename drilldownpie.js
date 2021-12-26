@@ -91,9 +91,10 @@ function drawPie(pieUnits) {
         }
 
         //Global Variables
-        var margin = 75,
-            width = 550,
-            height = 500,
+        d3.select("#graph-container")
+        var margin = 50,
+        width = +svg.attr("width"),
+        height = +svg.attr("height")
             radius = 175;
 
         var transformAttrValue = function (adjustLeft) {
