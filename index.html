@@ -8,6 +8,7 @@
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="example-data.js"></script>
   <script src="d3-tip.js"></script>
+  <script src="formtable.js"></script>
   <script src="drilldownpie.js"></script>
   <script src="draw-units.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -108,58 +109,27 @@
 
   <h1>Sankey Model of Cost of Quality</h1>
   <center>
-  <table border="1">
-    <tr>
-    <th>Header 1</th>
-    <th>Header 2</th>
-    </tr>
-    <tr>
-    <td>row 1, cell 1</td>
-    <td>row 1, cell 2</td>
-    </tr>
-    <tr>
-    <td>row 2, cell 1</td>
-    <td>row 2, cell 2</td>
-    </tr>
-    </table>
-     
+  <div id="inputTable">
+  </div>
       <button id="killData" onclick="killData()" value="test">Save & Run</button>
   
 
 </center>
   <div id="block container">
+    <!-- Sankey model -->
     <div id="sankey"> <canvas width="1000" height="530"></canvas>
       <svg width="1000" height="100"></svg>
     </div>
-
+    <!-- plotly titles and bullet charts -->
     <svg id="Bullet_titles" width="1000" height="20"></svg>
-    <!-- <div class="row">
-        <div class="col-md-5">
-          <div id="defectBullet_title" class="plotlytitles">
-            <center><u>Defective Unit Counter</u></center>
-          </div>
-        </div>
-        <div class="col-md-5">
-          <div id="coqBullet_title" class="plotlytitles">
-            <center><u>Cost of Quality (COQ) as % of Net Sales</u></center>
-          </div>
-        </div>
-      </div>-->
     <div id=plotly_COQ> </div>
-
-
-    <!-- <div class="col"> -->
-    <div id="barcharts_div">
+    <!-- bar and pie charts -->
       <svg id="barcharts" width="530" height="500"></svg>
       <svg id="graph-container" width="400" height="500"></svg>
-    </div>
-
-    <!-- <div class = "col"> -->
-    <!-- <div id="graph-container"></div> -->
   </div>
 
   <script>
-
+    formTable()
     height = d3.select("#sankey").attr("height")
 
     // Creates color based on COQ components
@@ -174,12 +144,12 @@
       "End User": "green"
     }
 
-    let data = data2
+    // let data = data2
     function updateData() {
       // killData()
       // console.log(d3.select("#killData").node().value)
       // d3.selectAll("svg > *").remove();
-      drawUnits(data)
+      drawUnits(submitData())
       d3.select("#killData").node().value="allowtime"
     }
 
