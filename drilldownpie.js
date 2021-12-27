@@ -5,7 +5,7 @@ function drawPie(pieUnits) {
     (function (visualization) {
         visualization.donut = {};
 
-        console.log(pieUnits)
+        // console.log(pieUnits)
 
         var topLevelItem = { label: ["CoQ", "($" + d3.sum(pieUnits.map(d => d.unitCost)).toLocaleString("en-US")+")" ]};
 
@@ -23,11 +23,11 @@ function drawPie(pieUnits) {
             totalCost = units.unitCost
             sGorP = units.sGorP
             var grandChildcolor = d3.color(colorLookup[units.sColor])
-            console.log("orig " + grandChildcolor)
+            // console.log("orig " + grandChildcolor)
             grandChildcolor = grandChildcolor.brighter(50 * coqCatscount[units.sColor])
             pieGrandchild.push({ colorIndex: d3.rgb(colorLookup[units.sColor]).darker(1.05 * coqCatscount[units.sColor]), value: totalCost, label: units.node, parentLabel: units.sColor })
             coqCatscount[units.sColor]++
-            console.log("brighter " + grandChildcolor)
+            // console.log("brighter " + grandChildcolor)
         }
         catCostlookup = {}
         for (cat of coqCats) { catCostlookup[cat] = d3.sum(pieGrandchild.filter(d => d.parentLabel === cat).map(d => d.value)) }
@@ -61,7 +61,7 @@ function drawPie(pieUnits) {
         }
         gorpCost = d3.sum(pieData.map(d => d.value))
         for (d of pieData) { d.label = [d.label, "($" + d.value.toLocaleString("en-US") + "; " + Math.round(100 * d.value / gorpCost) + "%)"] }
-        console.log(pieData)
+        // console.log(pieData)
 
         //   var data = [
         //     {colorIndex: 0, value: 43, childData: subData, label: "Nitrogen"},
@@ -395,7 +395,7 @@ function drawPie(pieUnits) {
                     var iInner = reverse ? d3.interpolate(finalInnerRadius, origInnerRadius) : d3.interpolate(origInnerRadius, finalInnerRadius);
                     
                     return function (tick) {
-                        console.log("hi")
+                        // console.log("hi")
                         curInnerRadius = iInner(tick);
                         curOuterRadius = origOuterRadius + ((curInnerRadius - origInnerRadius) / 1.75);
                         return arcZoom(selectedItem);

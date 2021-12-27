@@ -1,6 +1,8 @@
 //////// Good/Defective Indicators
 function drawIndicators(pieUnits) {
-  inUnits = data.inUnits
+  inUnits = d3.select("#inUnits").node().value
+  cogqgoal = d3.select("#cogqGoal").node().value.replace("%","")/100
+  copqgoal = d3.select("#copqGoal").node().value.replace("%","")/100
 var indicData = [
   {
     type: "indicator",
@@ -39,9 +41,9 @@ var indicData = [
 ////////////////// COPQ Indicators
 
 // Base
-netSales = data.unitSales * inUnits
+netSales = d3.select("#unitSales").node().value.replace("$","").replace(",","") * inUnits
 coqAxismax = d3.sum(pieUnits.map(d => d.unitCost)) / netSales
-console.log(coqAxismax)
+// console.log(coqAxismax)
 indCOPQ = 0
 indCOGQ = 0
 indCOQ = 0
@@ -55,7 +57,7 @@ var coqData = [
     number: { valueformat: ".3%" },
     domain: { x: [.65, 1], y: [2 / 3, 1] },
     delta: {
-      reference: data.copqGoal, position: "top",
+      reference: copqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
     },
     title: {
@@ -69,7 +71,7 @@ var coqData = [
       threshold: {
         line: { color: "red", width: 2, gradient: { yanchor: "vertical" } },
         thickness: 0.75,
-        value: data.copqGoal
+        value: copqgoal
       },
       bgcolor: "white",
 
@@ -83,7 +85,7 @@ var coqData = [
     number: { valueformat: ".3%" },
     domain: { x: [.65, 1], y: [1 / 3, 2 / 3] },
     delta: {
-      reference: data.cogqGoal, position: "top",
+      reference: cogqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
     },
     title: {
@@ -97,7 +99,7 @@ var coqData = [
       threshold: {
         line: { color: "red", width: 2, gradient: { yanchor: "vertical" } },
         thickness: 0.75,
-        value: data.cogqGoal
+        value: cogqgoal
       },
       bgcolor: "white",
       bar: { color: colorLookup["COGQ"] }
@@ -110,7 +112,7 @@ var coqData = [
     number: { valueformat: ".3%" },
     domain: { x: [.65, 1], y: [0, 1 / 3] },
     delta: {
-      reference: data.copqGoal + data.cogqGoal, position: "top",
+      reference: cogqgoal + copqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
     },
     title: {
@@ -124,7 +126,7 @@ var coqData = [
       threshold: {
         line: { color: "red", width: 2, gradient: { yanchor: "vertical" } },
         thickness: 0.75,
-        value: data.copqGoal + data.cogqGoal
+        value: cogqgoal + copqgoal
       },
       bgcolor: "white",
       bar: { color: "darkblue" }
@@ -186,7 +188,8 @@ svg.append("g")
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateIndicator(unitInidcator) {
-
+  inUnits = d3.select("#inUnits").node().value
+  netSales = d3.select("#unitSales").node().value.replace("$","").replace(",","") * inUnits
   defectUnits = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ" && d.terminal === true).map(d => d.units))
   goodUnits = inUnits - defectUnits
 
@@ -196,7 +199,7 @@ function updateIndicator(unitInidcator) {
   indCOPQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COPQ").map(d => d.unitCost)) / netSales
   indCOGQ = d3.sum(unitInidcator.filter(d => d.sGorP === "COGQ").map(d => d.unitCost)) / netSales
   indCOQ = (indCOPQ + indCOGQ)
-  console.log("indCOQ: " + indCOQ)
+  // console.log("indCOQ: " + indCOQ)
   Plotly.restyle(d3.selectAll("#plotly_COQ").node(), "value", [goodUnits, defectUnits, indCOPQ, indCOGQ, indCOQ])
-
+  
 }

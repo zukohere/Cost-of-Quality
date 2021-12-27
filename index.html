@@ -6,7 +6,7 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="d3-sankey-circular.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-  <script src="example-data.js"></script>
+  <!-- <script src="example-data.js"></script> -->
   <script src="d3-tip.js"></script>
   <script src="formtable.js"></script>
   <script src="drilldownpie.js"></script>
@@ -95,7 +95,8 @@
       font-family: monospace;
     }
 
-.objecttable td {
+.table,
+td {
        padding: 8px;
       }
     /* @-webkit-keyframes scale-up {
@@ -109,8 +110,10 @@
 
   <h1>Sankey Model of Cost of Quality</h1>
   <center>
-  <div id="inputTable">
-  </div>
+    <form>
+    <div id="valueTable" class="table" ></div>
+  <div id="inputTable" class="table" ></div>
+</form>
       <button id="killData" onclick="killData()" value="test">Save & Run</button>
   
 
@@ -149,20 +152,21 @@
       // killData()
       // console.log(d3.select("#killData").node().value)
       // d3.selectAll("svg > *").remove();
-      drawUnits(submitData())
+      // drawUnits(submitData())
+      submitData()
       d3.select("#killData").node().value="allowtime"
     }
 
     function killData() {
       d3.selectAll("svg > *").remove();
       d3.select("#killData").node().value="stoptime"
-      console.log(d3.select("#killData").node().value)
+      // console.log(d3.select("#killData").node().value)
       // d3.select("#killData").node().value="allowtime"
       setTimeout(function(){ updateData(); }, 500)
     }
 
     
-    console.log(d3.select("#killData").node().value);
+    // console.log(d3.select("#killData").node().value);
   </script>
   <!-- <script src="d3.sankey.js"></script> -->
   

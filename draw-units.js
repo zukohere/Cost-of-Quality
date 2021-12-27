@@ -1,45 +1,4 @@
 
-// var form = d3.select("body").append("form");
-        
-// var p = form.selectAll("p")
-//     .data(data.nodes)
-//     .enter()
-//     .append("p")
-//     .each(function(d){
-//         var self = d3.select(this);
-//         var label = self.append("label")
-//             .text(d.name)
-//             .style("width", "100px")
-//             .style("display", "inline-block");
-
-        
-//             var input = self.append("input")
-//                 .attr({
-//                     type: function(d){ return "text"; },
-//                     name: function(d){ return d.name; }
-//                 });
-        
-//       })
-//         form.append("button")
-//         .attr('type', 'submit')
-//         .attr("id", "run")
-//         .text('Save & Run');
-//       d3.select("#run").on("click",runEnter)
-
-
-
-
-
-
-
-
-
-
-// function runEnter() {
-// Prevent the page from refreshing
-// d3.event.preventDefault();
-////clear svg
-//d3.selectAll("svg > *").remove();
 function drawUnits(data){
 // data = data2
  // var margin = { top: 150, right: 100, bottom: 130, left: 120 };
@@ -121,7 +80,7 @@ function drawUnits(data){
  var node = nodeG.data(sankeyNodes)
    .enter()
    .append("g");
- console.log(node)
+//  console.log(node)
 
 
 
@@ -171,7 +130,7 @@ function drawUnits(data){
  // adds tooltip on hover over node rectangles.
  node.append("title")
    .text(function (d) { return d.name + "\n" + "$" + (d.cost) + "/unit"; });
- console.log(node)
+//  console.log(node)
 
  var link = linkG.data(sankeyLinks)
    .enter()
@@ -285,7 +244,7 @@ for (level of [...new Set(Array.from(data.links, d => d.level))]) {
           d3.sum(data.links.filter(d => d.target === link.source).map(d => d.unitCount))) {
           var ind =  getRandomIntInclusive(0, links.length - 1)
           links[ind].unitCount = links[ind].unitCount + 1 * (Math.random() * 100 < link.units)
-        console.log(data.links.filter(d => d.source === link.source))
+        // console.log(data.links.filter(d => d.source === link.source))
         }
 
     }
@@ -319,10 +278,10 @@ for (nodeEx of nodeArray.slice(1)) {
   sunitCost = data.nodes.find(d=>d.name===nodeEx).cost * sUnits
   pieUnits.push({ "node": nodeEx, "terminal": terminal, "units": sUnits, "unitCost": sunitCost, "sColor": sColor, "sGorP": sGorP })
 }
-console.log("pieUnits")
-console.log(pieUnits)
+// console.log("pieUnits")
+// console.log(pieUnits)
 // drawPie(pieUnits)
-data = data2
+// data = data2
 ///// End set up pie chart
 
 //// Pass pie data to Indicators and draw.
