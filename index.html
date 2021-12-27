@@ -18,8 +18,10 @@
 
   <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:100i" rel="stylesheet"> -->
 
-  <title>Sankey Model for Cost of Quality</title>
+  <title>Sankey Dashboard for Cost of Quality</title>
   <style>
+    header {background-color:lightgray;
+    color: darkslategray}
     body {
       font-family: monospace;
       /*background: #E3D4C1;*/
@@ -95,29 +97,35 @@
       font-family: monospace;
     }
 
-.table,
-td {
-       padding: 8px;
-      }
+    .table,
+    td {
+      padding: 8px;
+    }
+
+    hr {
+      border-top: 1px solid black
+    }
+
     /* @-webkit-keyframes scale-up {
     from { @include transform(scale(0.95)); opacity: 0; }
     to { @include transform(scale(1)); opacity: 1; }
 } */
   </style>
 </head>
-
+<center>
+<header>
+  <section class="row">
+    <div class="col-md-4">Author: <a href="mailto:matthewbrown84@gmail.com?subject=Cost of Quality Dashboard">Matthew Brown</a></div>
+    <div class="col-md-4"><a href="https://github.com/zukohere/Cost-of-Quality">github repo</a></div>
+    <div class="col-md-4"> <a href="https://github.com/zukohere/Cost-of-Quality/blob/main/README.md">README and
+        references</a></div>
+</header>
 <body>
-
-  <h1>Sankey Model of Cost of Quality</h1>
-  <center>
-    <form>
-    <div id="valueTable" class="table" ></div>
-  <div id="inputTable" class="table" ></div>
-</form>
-      <button id="killData" onclick="killData()" value="test">Save & Run</button>
-  
-
-</center>
+  <h1>Sankey Dashboard of Cost of Quality</h1>
+  <hr>
+  <h1>Dashboard</h1>
+  (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
+  <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
   <div id="block container">
     <!-- Sankey model -->
     <div id="sankey"> <canvas width="1000" height="530"></canvas>
@@ -126,10 +134,35 @@ td {
     <!-- plotly titles and bullet charts -->
     <svg id="Bullet_titles" width="1000" height="20"></svg>
     <div id=plotly_COQ> </div>
+    <!-- Launch Comment goes here -->
+    <div id="pre-launch_msg" style = "font-size:40px">Dashboard Will Load Here</div>
     <!-- bar and pie charts -->
-      <svg id="barcharts" width="530" height="500"></svg>
-      <svg id="graph-container" width="400" height="500"></svg>
+    <svg id="barcharts" width="530" height="500"></svg>
+    <svg id="graph-container" width="400" height="500"></svg>
   </div>
+  <!-- Adjust Parameters -->
+  <hr color="black">
+  <h2>Adjust Parameters and Launch the Dashboard here</h2>
+  <div id="block container">
+    <div class="row" id ="AdjustParams">
+      
+    <button id="killData" onclick="killData()" value="test">Update Values & Run</button>
+ 
+  </div>
+    
+            <div class="row">
+              <div class="col-md-3"></div>
+        <form>
+          <div class="col-md-3">
+            <div id="valueTable" class="table"></div>
+          </div>
+          <div class="col-md-3">
+            <div id="inputTable" class="table"></div>
+          </div>
+        </form>
+      </div>
+  </div>
+</center>
 
   <script>
     formTable()
@@ -154,25 +187,26 @@ td {
       // d3.selectAll("svg > *").remove();
       // drawUnits(submitData())
       submitData()
-      d3.select("#killData").node().value="allowtime"
+      d3.select("#killData").node().value = "allowtime"
     }
 
     function killData() {
       d3.selectAll("svg > *").remove();
-      d3.select("#killData").node().value="stoptime"
+      d3.select("#killData").node().value = "stoptime"
+      d3.select("#pre-launch_msg").html("")
       // console.log(d3.select("#killData").node().value)
       // d3.select("#killData").node().value="allowtime"
-      setTimeout(function(){ updateData(); }, 500)
+      setTimeout(function () { updateData(); }, 500)
     }
 
-    
+
     // console.log(d3.select("#killData").node().value);
   </script>
   <!-- <script src="d3.sankey.js"></script> -->
-  
-  
+
+
   <!-- <script src="Scorecard.js"></script> -->
-  
+
 </body>
 
 </html>
