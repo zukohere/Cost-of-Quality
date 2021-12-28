@@ -15,7 +15,7 @@ var indicData = [
     // delta: { reference: inUnits },
     value: inUnits,
     domain: { x: [0, 0.45], y: [0.5, 0.75] },
-    title: { text: "<b style= 'font-size:0.7em'>Quality</b><br><span style='color: gray; font-size:0.6em'></span>" }
+    title: { text: "<b>Quality</b></span>" , font: { size: 14 }}
   },
   {
     type: "indicator",
@@ -28,7 +28,7 @@ var indicData = [
     // delta: { reference: 0 },
     value: 0,
     domain: { x: [0, 0.45], y: [0, 0.25] },
-    title: { text: "<b style= 'font-size:0.7em'>Defective</b><br><span style='color: gray; font-size:0.6em'>(Units)</span>" }
+    title: {text: "<b>Defective<br></b><span style='color: gray; font-size:0.8em'>(Units)</span>", font: { size: 14 }}
   }
 ];
 
@@ -172,12 +172,12 @@ svg.call(tool_tip1);
 
 svg.append("g")
   .append("text")
-  .attr("x", 3 * +svg.attr("width") / 4)
+  .attr("x", 3.1 * +svg.attr("width") / 4)
   .attr("y", +svg.attr("height") / 2)
   .attr("text-anchor", "middle")
   .style("font-size", "16px")
   .style("text-decoration", "underline")
-  .text("Cost of Quality (COQ) as % of Net Sales")
+  .text("COQ as % of Net Sales")
   .on('mouseover', tool_tip1.show)
   .on('mouseout', tool_tip1.hide);
 

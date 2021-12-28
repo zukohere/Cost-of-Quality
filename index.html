@@ -20,8 +20,11 @@
 
   <title>Sankey Dashboard for Cost of Quality</title>
   <style>
-    header {background-color:lightgray;
-    color: darkslategray}
+    header {
+      background-color: lightgray;
+      color: darkslategray
+    }
+
     body {
       font-family: monospace;
       /*background: #E3D4C1;*/
@@ -102,6 +105,10 @@
       padding: 8px;
     }
 
+    th {
+      text-align: center
+    }
+
     hr {
       border-top: 1px solid black
     }
@@ -113,99 +120,112 @@
   </style>
 </head>
 <center>
-<header>
-  <section class="row">
-    <div class="col-md-4">Author: <a href="mailto:matthewbrown84@gmail.com?subject=Cost of Quality Dashboard">Matthew Brown</a></div>
-    <div class="col-md-4"><a href="https://github.com/zukohere/Cost-of-Quality">github repo</a></div>
-    <div class="col-md-4"> <a href="https://github.com/zukohere/Cost-of-Quality/blob/main/README.md">README and
-        references</a></div>
-</header>
-<body>
-  <h1>Sankey Dashboard of Cost of Quality</h1>
-  <hr>
-  <h1>Dashboard</h1>
-  (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
-  <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
-  <div id="block container">
-    <!-- Sankey model -->
-    <div id="sankey"> <canvas width="1000" height="530"></canvas>
-      <svg width="1000" height="100"></svg>
+  <header>
+    <section class="row">
+      <div class="col-md-4">Author: <a href="mailto:matthewbrown84@gmail.com?subject=Cost of Quality Dashboard">Matthew
+          Brown</a></div>
+      <div class="col-md-4"><a href="https://github.com/zukohere/Cost-of-Quality">github repo</a></div>
+      <div class="col-md-4"> <a href="https://github.com/zukohere/Cost-of-Quality/blob/main/README.md">README and
+          references</a></div>
+  </header>
+
+  <body>
+    <h1>Sankey Dashboard of Cost of Quality</h1>
+    <hr>
+    <div id="Dashboard">
+      <h1>Dashboard</h1>
     </div>
-    <!-- plotly titles and bullet charts -->
-    <svg id="Bullet_titles" width="1000" height="20"></svg>
-    <div id=plotly_COQ> </div>
-    <!-- Launch Comment goes here -->
-    <div id="pre-launch_msg" style = "font-size:40px">Dashboard Will Load Here</div>
-    <!-- bar and pie charts -->
-    <svg id="barcharts" width="530" height="500"></svg>
-    <svg id="graph-container" width="400" height="500"></svg>
-  </div>
-  <!-- Adjust Parameters -->
-  <hr color="black">
-  <h2>Adjust Parameters and Launch the Dashboard here</h2>
-  <div id="block container">
-    <div class="row" id ="AdjustParams">
-      
-    <button id="killData" onclick="killData()" value="test">Update Values & Run</button>
- 
-  </div>
-    
-            <div class="row">
-              <div class="col-md-3"></div>
+    (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
+    <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
+
+    <div id="block container">
+      <!-- Sankey model -->
+      <div id="sankey"> <canvas width="1000" height="530"></canvas>
+        <svg width="1000" height="100"></svg>
+      </div>
+      <!-- plotly titles and bullet charts -->
+      <svg id="Bullet_titles" width="1000" height="20"></svg>
+      <div id=plotly_COQ> </div>
+      <!-- Launch Comment goes here -->
+      <div id="pre-launch_msg" style="font-size:40px">Dashboard Will Load Here</div>
+      <!-- bar and pie charts -->
+      <svg id="barcharts" width="530" height="500"></svg>
+      <svg id="graph-container" width="400" height="500"></svg>
+    </div>
+    <!-- Adjust Parameters -->
+    <hr color="black">
+    <h2>Adjust Any/All Parameters and Launch the Dashboard here</h2>
+    <div id="block container">
+      <div class="row" id="AdjustParams">
+
+        <a href="#Dashboard"><button id="killData" onclick="killData()" value="test">Update Values & Run</button></a>
+
+      </div>
+
+      <div class="row">
         <form>
+          <div class="col-md-1"></div>
+          <div class="col-md-3">
+            <div id="costTable" class="table"></div>
+          </div>
           <div class="col-md-3">
             <div id="valueTable" class="table"></div>
           </div>
           <div class="col-md-3">
+            <label for="modelType">Choose a Model Type:</label>
+            <select name="modelType" id="modelType">
+              <option value="probVal">Probability</option>
+              <option value="knownVal">Known Values</option>
+            </select>
             <div id="inputTable" class="table"></div>
           </div>
         </form>
       </div>
-  </div>
+    </div>
 </center>
 
-  <script>
-    formTable()
-    height = d3.select("#sankey").attr("height")
+<script>
+  formTable()
+  height = d3.select("#sankey").attr("height")
 
-    // Creates color based on COQ components
-    const colorLookup = {
-      "COGQ": "DarkSeaGreen",
-      "COPQ": "LightCoral",
-      "Prevention": "blue",
-      "Appraisal": "purple",
-      "Internal Failure": "orange",
-      "External Failure": "red",
-      "Shipping": "gray",
-      "End User": "green"
-    }
+  // Creates color based on COQ components
+  const colorLookup = {
+    "COGQ": "DarkSeaGreen",
+    "COPQ": "LightCoral",
+    "Prevention": "LightBlue",
+    "Appraisal": "thistle",
+    "Internal Failure": "LightSalmon",
+    "External Failure": "PaleVioletRed",
+    "Shipping": "LightGray",
+    "End User": "LightGreen"
+  }
 
-    // let data = data2
-    function updateData() {
-      // killData()
-      // console.log(d3.select("#killData").node().value)
-      // d3.selectAll("svg > *").remove();
-      // drawUnits(submitData())
-      submitData()
-      d3.select("#killData").node().value = "allowtime"
-    }
+  // let data = data2
+  function updateData() {
+    // killData()
+    // console.log(d3.select("#killData").node().value)
+    // d3.selectAll("svg > *").remove();
+    // drawUnits(submitData())
+    submitData()
+    d3.select("#killData").node().value = "allowtime"
+  }
 
-    function killData() {
-      d3.selectAll("svg > *").remove();
-      d3.select("#killData").node().value = "stoptime"
-      d3.select("#pre-launch_msg").html("")
-      // console.log(d3.select("#killData").node().value)
-      // d3.select("#killData").node().value="allowtime"
-      setTimeout(function () { updateData(); }, 500)
-    }
+  function killData() {
+    d3.selectAll("svg > *").remove();
+    d3.select("#killData").node().value = "stoptime"
+    d3.select("#pre-launch_msg").html("")
+    // console.log(d3.select("#killData").node().value)
+    // d3.select("#killData").node().value="allowtime"
+    setTimeout(function () { updateData(); }, 500)
+  }
 
 
     // console.log(d3.select("#killData").node().value);
-  </script>
-  <!-- <script src="d3.sankey.js"></script> -->
+</script>
+<!-- <script src="d3.sankey.js"></script> -->
 
 
-  <!-- <script src="Scorecard.js"></script> -->
+<!-- <script src="Scorecard.js"></script> -->
 
 </body>
 

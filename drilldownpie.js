@@ -25,7 +25,7 @@ function drawPie(pieUnits) {
             var grandChildcolor = d3.color(colorLookup[units.sColor])
             // console.log("orig " + grandChildcolor)
             grandChildcolor = grandChildcolor.brighter(50 * coqCatscount[units.sColor])
-            pieGrandchild.push({ colorIndex: d3.rgb(colorLookup[units.sColor]).darker(1.05 * coqCatscount[units.sColor]), value: totalCost, label: units.node, parentLabel: units.sColor })
+            pieGrandchild.push({ colorIndex: d3.rgb(colorLookup[units.sColor]).darker(0.45 * coqCatscount[units.sColor]), value: totalCost, label: units.node, parentLabel: units.sColor })
             coqCatscount[units.sColor]++
             // console.log("brighter " + grandChildcolor)
         }
@@ -542,7 +542,8 @@ function drawPie(pieUnits) {
             chart = pieSVG
                 .append("g")
                 .attr("class", "primary")
-                .attr('transform', transformAttrValue());
+                .attr('transform', transformAttrValue())
+                .style("opacity",0.75);
 
             chartLabelsGroup = pieSVG
                 .append("g")
@@ -592,7 +593,8 @@ function drawPie(pieUnits) {
 
             chartSelect = pieSVG.append('g')
                 .attr('class', 'secondary')
-                .attr("transform", transformAttrValue());
+                .attr("transform", transformAttrValue())
+                .style("opacity", 0.5);
 
 
             var tool_tip = d3.tip()
@@ -603,12 +605,12 @@ function drawPie(pieUnits) {
 
             pieSVG.append("g")
                 .append("text")
-                .attr("x", (width / 2.5))
+                .attr("x", (width / 2))
                 .attr("y", (margin/ 2.75))
                 .attr("text-anchor", "middle")
                 .style("font-size", "16px")
                 .style("text-decoration", "underline")
-                .text("Cost of Quality Drilldown")
+                .text("COQ Drilldown")
                 .on('mouseover', tool_tip.show)
                 .on('mouseout', tool_tip.hide);
         };
