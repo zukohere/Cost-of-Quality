@@ -144,7 +144,7 @@ svg = d3.select("#Bullet_titles")
 var tool_tip = d3.tip()
   .attr("class", "d3-tip")
   .offset([50, 0])
-  .html("I'm a tool tip!");
+  .html("This bullet chart displays the number of quality vs. defective units in the model.");
 svg.call(tool_tip);
 
 svg.append("g")
@@ -162,8 +162,12 @@ svg.append("g")
 svg = d3.select("#Bullet_titles")
 var tool_tip1 = d3.tip()
   .attr("class", "d3-tip")
-  .offset([50, 0])
-  .html("I'm a tool tip also!");
+  .offset([100, 0])
+  .html("This bullet chart measures the the Cost of Poor Quality, "+
+  "<br> Cost of Good Quality and Overall Cost of Quality as a "+
+  "<br> Percent of the Total Net Sales (The product of Sales $/Unit and Input Units)."+
+  "<br> The red bars represent the threshold goal levels."+
+  "<br> The gauge values display percentage points above/below goal.");
 svg.call(tool_tip1);
 
 svg.append("g")

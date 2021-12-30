@@ -6,6 +6,9 @@ function drawUnits(data) {
   var width = 1000;
   var height = 300;
 
+  // threshold before the sankey model stops representing unit for unit and caps.
+  modelUnitLimit = 500
+
   //  using probabilistic or known value?
   knownVal = d3.select("#modelType").node().value === "probVal"
   // set inUnits (number of units input)
@@ -137,7 +140,7 @@ function drawUnits(data) {
     var tipText = data.tipText
     var tool_tip = d3.tip()
                 .attr("class", "d3-tip")
-                .offset([50, 0])
+                .offset([75, 0])
                 .html(data.tipText);
             svg.call(tool_tip);
 
@@ -362,8 +365,14 @@ function drawUnits(data) {
 
   var tool_tip = d3.tip()
     .attr("class", "d3-tip")
-    .offset([50, 0])
-    .html("I'm a tool tip!");
+    .offset([160, 0])
+    .html("This bar chart displays the cost of each operation"+
+    "<br> based on the number of units passing through it."+
+    "<br><br><strong> Hover over any bar to see more information.</strong>"+
+    "<br><br> If the number of units is less than "+modelUnitLimit+", "+
+    "<br> the bar chart will update right along with the flow chart!"+
+    "<br> Otherwise, the full chart displays right away, and the flow displays"+
+    "<br> a representative quantity.");
   svg.call(tool_tip);
 
   g.append("g")
@@ -471,7 +480,7 @@ levels = [...new Set(Array.from(data.links, d => d.level))]
 
 level = -1
 
-//////////////////////////// For if units <1000
+//////////////////////////// For if units < modelUnitLimit
   function tick(elapsed, time) {
 
     
@@ -510,7 +519,7 @@ level = -1
 
   }
 
-  //////////////////////////// For if units are 1000 plus
+  //////////////////////////// For if units are < modelUnitLimit
   function tick1000plus(elapsed, time) {
     
     if (particles.filter(d => d.current < d.length).length === 0) {
@@ -521,8 +530,8 @@ level = -1
     }
     
 
-    // unit scale down to 1000
-    unitScale = d3.scaleLinear().domain([0,inUnits]).range([0,1000])
+    // unit scale down to modelUnitLimit
+    unitScale = d3.scaleLinear().domain([0,inUnits]).range([0,modelUnitLimit])
 
     d3.selectAll("#path-" + (level))
       .each(
@@ -566,7 +575,7 @@ level = -1
 
   /////////////////////// updates Unit Bar Chart
   function updateCharts() {
-    if (inUnits<1000) {
+    if (inUnits<modelUnitLimit) {
     for (nodeEx of Array.from(data.nodes, d => d.name).slice(1)) {
 
       lookupTarget = targetUnits.find(p => p.node == nodeEx)

@@ -599,8 +599,13 @@ function drawPie(pieUnits) {
 
             var tool_tip = d3.tip()
                 .attr("class", "d3-tip")
-                .offset([50, 0])
-                .html("I'm a tool tip!");
+                .offset([140, 0])
+                .html("This donut chart displays the overall Cost of Quality (COQ)."
+                +"<br><br><strong>Click any arc to drilldown into that category and view the component costs as % of COQ."+
+                "<br> Click the wide ring to back out to the previous level.</strong>"+
+                "<br><br>Level 1: Cost of Poor Quality (COPQ) and Cost of Good Quality (COGQ). "+
+                "<br>Level 2: COPQ or COGQ Components. "+
+                "<br>Level 3: Operation. ");
             svg.call(tool_tip);
 
             pieSVG.append("g")

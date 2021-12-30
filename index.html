@@ -163,14 +163,14 @@
       <div class="row"><br></div>
       <div class="row"><label for="dataType">Choose a Model Type:</label></div>
       <div class="row" id="AdjustData">
-            <select name="dataType" id="dataType" onchange="dataSelect()">
+            <select name="dataType" id="dataType" onchange="dataSelect(), formTable()">
               <option value="pfr">Product For Resale</option>
               <option value="mfg">In-House Manufacture</option>
             </select>
       </div>
 
       <div class="row"><br></div>
-      <div class="row">
+      <div class="row" id="userTablesArea">
         <form>
           <div class="col-md-1"></div>
           <div class="col-md-3">

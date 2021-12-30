@@ -1,11 +1,11 @@
 function formTable() {
-
+    d3.selectAll("#userTablesArea").selectAll("table").html("")
     // get the original data
     d3.json(dataSelect(), function (err, data) {
 
 
         rawdata = data.data
-
+        
         ///////////////////////////// PROBABILITY TABLE
         // set up the table
         var table = d3.select("#inputTable").append("table").attr("border", 1);
@@ -129,9 +129,10 @@ function submitData() {
 
 
         rawdata = data.data
-
+        console.log(rawdata)
 
         costTabInputs = d3.select("#costTable").selectAll("input").nodes()
+        console.log(costTabInputs)
         for (d3node of costTabInputs) {
             operation = rawdata.nodes.find(d => d.name === d3node.name)
             if (d3node.value.includes("%")) { operation.cost = d3node.value.replace("%", "").replace("$", "").replace(",", "") / 100 }
@@ -144,11 +145,11 @@ function submitData() {
             if (d3node.value.includes("%")) { rawdata[d3node.id] = d3node.value.replace("%", "").replace("$", "").replace(",", "") / 100 }
             else { rawdata[d3node.id] = d3node.value.replace("$", "").replace(",", "") }
             checkInputs(d3node.value, d3node.name)
-
+            
         }
 
         ////////// Probability vs Known Value Models
-
+        
         if (d3.select("#modelType").node().value === "probVal") {
             ///// Updates probability in the rawdata
             probTabInputs = d3.select("#inputTable").selectAll("input").nodes()
@@ -157,7 +158,7 @@ function submitData() {
                 nTarget = d3node.id.split("-->")[1]
 
                 nLink = rawdata.links.find(d => d.source === nSource && d.target === nTarget)
-
+                
                 nLink.units = +d3node.value.replace("%", "").replace("$", "").replace(",", "")
                 checkInputs(d3node.value, d3node.id)
 
@@ -168,8 +169,8 @@ function submitData() {
                 for (link of links) {
                     prevLinks = rawdata.links.filter(d => d.target === link.source)
                     if (!link.unitCount) {
-
-                        if (level === 0) { link.unitCount = rawdata.inUnits * link.units / 100 }
+                        
+                        if (level === 0) { link.unitCount = rawdata.inUnits* link.units / 100 }
                         else {
 
                             link.unitCount = Math.floor(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
@@ -181,7 +182,7 @@ function submitData() {
                                     links[ind].unitCount = links[ind].unitCount + 1 * (Math.random() * 100 < link.units)
                                 }
                         }
-
+                    
                     }
                 }
 
@@ -208,7 +209,7 @@ function submitData() {
         }
 
         dataToDraw = rawdata
-
+        
         drawUnits(dataToDraw)
 
     })
@@ -245,7 +246,7 @@ function modelChange() {
 
 function checkInputs(invalue, id) {
     if (isNaN(invalue.replace("%", "").replace("$", "").replace(",", ""))) {
-        alert("Value: " + invalue + " is not valid input for " + id)
+        alert("Value: "+invalue+" is not valid input for "+id)
     }
 }
 
@@ -253,12 +254,14 @@ function dataSelect() {
     console.log(d3.select("#dataType").node().value)
     var usrDataType = d3.select("#dataType").node().value
     if (usrDataType === "mfg") {
-        path = "manufacture.json"
+    path = "manufacture.json"
     }
 
-    else
-        if (usrDataType === "pfr") {
-            path = "pfr.json"
+    else 
+    if (usrDataType === "pfr") {
+        path = "pfr.json"
         }
-    return path
+        return path
+
+    
 }
