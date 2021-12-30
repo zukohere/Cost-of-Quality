@@ -128,10 +128,10 @@ function submitData() {
 
 
         rawdata = data.data
-        console.log(rawdata)
+        
 
         costTabInputs = d3.select("#costTable").selectAll("input").nodes()
-        console.log(costTabInputs)
+        
         for (d3node of costTabInputs) {
             operation = rawdata.nodes.find(d => d.name === d3node.name)
             if (d3node.value.includes("%")) { operation.cost = d3node.value.replace("%", "").replace("$", "").replace(",", "") / 100 }
@@ -250,7 +250,7 @@ function checkInputs(invalue, id) {
 }
 
 function dataSelect() {
-    console.log(d3.select("#dataType").node().value)
+    
     var usrDataType = d3.select("#dataType").node().value
     if (usrDataType === "mfg") {
     path = "manufacture.json"
