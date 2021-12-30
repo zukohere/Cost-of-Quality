@@ -3,7 +3,6 @@ function formTable() {
     // get the original data
     d3.json(dataSelect(), function (err, data) {
 
-
         rawdata = data.data
         
         ///////////////////////////// PROBABILITY TABLE
@@ -259,9 +258,8 @@ function dataSelect() {
 
     else 
     if (usrDataType === "pfr") {
-        path = "pfr.json"
+        path = "PFR.json"
         }
         return path
-
     
 }

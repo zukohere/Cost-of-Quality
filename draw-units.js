@@ -368,7 +368,7 @@ function drawUnits(data) {
     .offset([160, 0])
     .html("This bar chart displays the cost of each operation"+
     "<br> based on the number of units passing through it."+
-    "<br><br><strong> Hover over any bar to see more information.</strong>"+
+    // "<br><br><strong> Hover over any bar to see more information.</strong>"+
     "<br><br> If the number of units is less than "+modelUnitLimit+", "+
     "<br> the bar chart will update right along with the flow chart!"+
     "<br> Otherwise, the full chart displays right away, and the flow displays"+

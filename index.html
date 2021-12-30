@@ -131,65 +131,98 @@
 
   <body>
     <h1>Sankey Dashboard of Cost of Quality</h1>
-    <hr>
-    <div id="Dashboard">
-      <h1>Dashboard</h1>
-    </div>
-    (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
-    <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
+</center>
+<section class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8"><strong>ABOUT:</strong> The <a href="https://asq.org/quality-resources/cost-of-quality">Cost of Quality (COQ)</a> is metric that can aid in targeting efforts
+    for continuous improvement, but only where the metric is understood and transparent. <br>
+    <br>
+    The common components of the COQ are: <br>
+    <ul>
+      <li>Cost of Good Quality (COGQ)
+        <ul>
+          <li>Prevention: Design and Development, Purchasing Controls, Manufacturing Controls,
+            Preservation/Transportation, User Training</li>
+          <li>Appraisal: Inspection and Audit</li>
+        </ul>
+      </li>
+      <li>Cost of Poor Quality (COPQ)
+          <ul>
+            <li>Internal Failure: Scrap, Rework</li>
+            <li>External Failure: Returns, Field Scrap, Field Service</li>
+          </ul>
+        </li>
+    </ul>
 
-    <div id="block container">
-      <!-- Sankey model -->
-      <div id="sankey"> <canvas width="1000" height="530"></canvas>
-        <svg width="1000" height="100"></svg>
-      </div>
-      <!-- plotly titles and bullet charts -->
-      <svg id="Bullet_titles" width="1000" height="20"></svg>
-      <div id=plotly_COQ> </div>
-      <!-- Launch Comment goes here -->
-      <div id="pre-launch_msg" style="font-size:40px">Dashboard Will Load Here</div>
-      <!-- bar and pie charts -->
-      <svg id="barcharts" width="530" height="500"></svg>
-      <svg id="graph-container" width="400" height="500"></svg>
-    </div>
-    <!-- Adjust Parameters -->
-    <hr color="black">
-    <h2>Adjust Any/All Parameters and Launch the Dashboard here</h2>
-    <div id="block container">
-      <div class="row" id="AdjustParams">
+    <br>
+    To aid in education about the components of the COQ and how to develop a model with visualizations, I developed this
+    interactive dashboard to help better illustrate the COQ and its components. For more information, references, and
+    applications, see the README. You can run the basic model by clicking the button below. 
+    Scroll down or <a href="#AdjustParams">click here</a> to move to the section of the page with model paramater adjustment.
 
-        <a href="#Dashboard"><button id="killData" onclick="killData()" value="test">Update Values & Run</button></a>
-      </div>
-      <div class="row"><br></div>
-      <div class="row"><label for="dataType">Choose a Model Type:</label></div>
-      <div class="row" id="AdjustData">
-            <select name="dataType" id="dataType" onchange="dataSelect(), formTable()">
-              <option value="pfr">Product For Resale</option>
-              <option value="mfg">In-House Manufacture</option>
-            </select>
-      </div>
+  </div>
+</section>
 
-      <div class="row"><br></div>
-      <div class="row" id="userTablesArea">
-        <form>
-          <div class="col-md-1"></div>
-          <div class="col-md-3">
-            <div id="costTable" class="table"></div>
-          </div>
-          <div class="col-md-3">
-            <div id="valueTable" class="table"></div>
-          </div>
-          <div class="col-md-3">
-            <label for="modelType">Choose Input Type:</label>
-            <select name="modelType" id="modelType" onchange="modelChange()">
-              <option value="probVal">Probability</option>
-              <option value="knownVal">Known Values</option>
-            </select>
-            <div id="inputTable" class="table"></div>
-          </div>
-        </form>
-      </div>
+<center>
+  <hr>
+  <div id="Dashboard">
+    <h1>Dashboard</h1>
+  </div>
+  (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
+  <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
+
+  <div id="block container">
+    <!-- Sankey model -->
+    <div id="sankey"> <canvas width="1000" height="530"></canvas>
+      <svg width="1000" height="100"></svg>
     </div>
+    <!-- plotly titles and bullet charts -->
+    <svg id="Bullet_titles" width="1000" height="20"></svg>
+    <div id=plotly_COQ> </div>
+    <!-- Launch Comment goes here -->
+    <div id="pre-launch_msg" style="font-size:40px">Dashboard Will Load Here</div>
+    <!-- bar and pie charts -->
+    <svg id="barcharts" width="530" height="500"></svg>
+    <svg id="graph-container" width="400" height="500"></svg>
+  </div>
+  <!-- Adjust Parameters -->
+  <hr color="black">
+  <h2>Adjust Any/All Parameters and Launch the Dashboard here</h2>
+  <div id="block container">
+    <div class="row" id="AdjustParams">
+
+      <a href="#Dashboard"><button id="killData" onclick="killData()" value="test">Update Values & Run</button></a>
+    </div>
+    <div class="row"><br></div>
+    <div class="row"><label for="dataType">Choose a Model Type:</label></div>
+    <div class="row" id="AdjustData">
+      <select name="dataType" id="dataType" onchange="dataSelect(), formTable()">
+        <option value="pfr">Product For Resale</option>
+        <option value="mfg">In-House Manufacture</option>
+      </select>
+    </div>
+
+    <div class="row"><br></div>
+    <div class="row" id="userTablesArea">
+      <form>
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+          <div id="costTable" class="table"></div>
+        </div>
+        <div class="col-md-3">
+          <div id="valueTable" class="table"></div>
+        </div>
+        <div class="col-md-3">
+          <label for="modelType">Choose Input Type:</label>
+          <select name="modelType" id="modelType" onchange="modelChange()">
+            <option value="probVal">Probability</option>
+            <option value="knownVal">Known Values</option>
+          </select>
+          <div id="inputTable" class="table"></div>
+        </div>
+      </form>
+    </div>
+  </div>
 </center>
 
 <script>
