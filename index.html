@@ -159,9 +159,17 @@
       <div class="row" id="AdjustParams">
 
         <a href="#Dashboard"><button id="killData" onclick="killData()" value="test">Update Values & Run</button></a>
-
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><label for="dataType">Choose a Model Type:</label></div>
+      <div class="row" id="AdjustData">
+            <select name="dataType" id="dataType" onchange="dataSelect()">
+              <option value="pfr">Product For Resale</option>
+              <option value="mfg">In-House Manufacture</option>
+            </select>
       </div>
 
+      <div class="row"><br></div>
       <div class="row">
         <form>
           <div class="col-md-1"></div>
@@ -172,8 +180,8 @@
             <div id="valueTable" class="table"></div>
           </div>
           <div class="col-md-3">
-            <label for="modelType">Choose a Model Type:</label>
-            <select name="modelType" id="modelType">
+            <label for="modelType">Choose Input Type:</label>
+            <select name="modelType" id="modelType" onchange="modelChange()">
               <option value="probVal">Probability</option>
               <option value="knownVal">Known Values</option>
             </select>

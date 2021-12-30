@@ -6,7 +6,10 @@ function drawUnits(data) {
   var width = 1000;
   var height = 300;
 
-  //  let data = data2;
+  //  using probabilistic or known value?
+  knownVal = d3.select("#modelType").node().value === "probVal"
+  // set inUnits (number of units input)
+  const inUnits = data.inUnits
 
   const nodePadding = 40;
 
@@ -27,7 +30,7 @@ function drawUnits(data) {
     // .nodeAlign(d3.sankeyRight)
     // .nodeAlign(d3.sankeyJustify)
     .iterations(1);
-  // console.log(sankey)
+  
 
   // var svg = d3.select("#chart").append("svg")
 
@@ -58,35 +61,13 @@ function drawUnits(data) {
 
   let depthExtent = d3.extent(sankeyNodes, function (d) { return d.depth; });
 
-  //Uses gradient to create node color
-  // var nodeColour = d3.scaleSequential(d3.interpolateCool)
-  //  .domain([0,width]);
-
-  //  //Creates color based on COQ components
-  //  const colorLookup = {
-  //    "COGQ": "DarkSeaGreen",
-  //    "COPQ": "LightCoral",
-  //    "Prevention": "blue",
-  //    "Appraisal": "purple",
-  //    "Internal Failure": "orange",
-  //    "External Failure": "red",
-  //    "Shipping": "gray",
-  //    "End User": "green"
-  //  }
-
 
   //Adjust link Y coordinates based on target/source Y positions
 
   var node = nodeG.data(sankeyNodes)
     .enter()
     .append("g");
-  //  console.log(node)
-
-
-
-
-
-
+  
   node.append("rect")
     .attr("x", function (d) { return d.x0; })
     .attr("y", function (d) { return d.y0; })
@@ -130,7 +111,7 @@ function drawUnits(data) {
   // adds tooltip on hover over node rectangles.
   node.append("title")
     .text(function (d) { return d.name + "\n" + "$" + (d.cost) + "/unit"; });
-  //  console.log(node)
+  
 
   var link = linkG.data(sankeyLinks)
     .enter()
@@ -152,6 +133,25 @@ function drawUnits(data) {
       return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
     });
 
+    var chartTitle = data.chartTitle
+    var tipText = data.tipText
+    var tool_tip = d3.tip()
+                .attr("class", "d3-tip")
+                .offset([50, 0])
+                .html(data.tipText);
+            svg.call(tool_tip);
+
+            svg.append("g")
+                .append("text")
+                .attr("x", (width + margin.left + margin.right) / 2)
+                .attr("y", (height + margin.top + margin.bottom)/6)
+                .attr("class", "sankeyTitle")
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("text-decoration", "underline")
+                .text(chartTitle)
+                .on('mouseover', tool_tip.show)
+                .on('mouseout', tool_tip.hide);
 
   //ARROWS
   // var arrowsG = linkG.data(sankeyLinks)
@@ -221,41 +221,11 @@ function drawUnits(data) {
 
   }
 
-  ////////////////////////////////// Begin Remove Rounding Error from particles ///////////////////////
-  function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
-  }
-
-  const inUnits = data.inUnits
-
-  for (level of [...new Set(Array.from(data.links, d => d.level))]) {
-    links = data.links.filter(d => d.level === level)
-    for (link of links) {
-      prevLinks = data.links.filter(d => d.target === link.source)
-      if (!link.unitCount) {
-        if (level === 0) { link.unitCount = inUnits }
-        else {
-
-          link.unitCount = Math.floor(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
-          // console.log(d3.sum(data.links.filter(d=>d.target===link.source).map(d=>d.unitCount)))
-          if (link === links[links.length - 1])
-            while (d3.sum(data.links.filter(d => d.source === link.source).map(d => d.unitCount)) <
-              d3.sum(data.links.filter(d => d.target === link.source).map(d => d.unitCount))) {
-              var ind = getRandomIntInclusive(0, links.length - 1)
-              links[ind].unitCount = links[ind].unitCount + 1 * (Math.random() * 100 < link.units)
-              // console.log(data.links.filter(d => d.source === link.source))
-            }
-        }
-
-      }
-    }
-  }
+  //////// SET UP PARTICLE THROUGHTPUT BY LEVEL (groupings of links) to be passed to Pie Chart
   nodeArray = Array.from(data.nodes, d => d.name)
   sourceArray = [...new Set(Array.from(data.links, d => d.source.name))]
   targetArray = [...new Set(Array.from(data.links, d => d.target.name))]
-  // console.log(data.links)
+  
 
   nodeUnits = {}
   for (nodeEx of targetArray) {
@@ -264,40 +234,53 @@ function drawUnits(data) {
     probSum = d3.sum(data.links.filter(d => d.source.name === nodeEx).map(d => d.units))
     console.log("node:" + nodeEx + " probSum: " + probSum + " units in:" + unitsIn + " units out:" + unitsOut)
     nodeUnits[nodeEx] = unitsIn
+    var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+    if (!terminal && unitsIn != unitsOut) {confText = "Warning: For "+nodeEx +", the units entering ("+unitsIn+") and exiting ("+unitsOut+
+        ") do not match. Press OK to run anyway."
+      alert(confText)}
   }
 
-  ///////////////// End Rounding Error /////////////
+
 
   //// Set up Pie Chart
-  pieUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits * data.nodes.find(d => d.name === nodeArray[0]).cost, "sColor": data.nodes.find(d => d.name === nodeArray[0]).COQ, "sGorP": data.nodes.find(d => d.name === nodeArray[0]).GorP }]
-  for (nodeEx of nodeArray.slice(1)) {
-    var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+  pieUnits = []
+  
+    for (nodeEx of nodeArray) {
+     
+      nodelevel = data.links.filter(d => d.source.name === nodeEx).map(p=>p.level)
+      var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+      var sColor = data.nodes.find(d => d.name === nodeEx).COQ
+      var sGorP = data.nodes.find(d => d.name === nodeEx).GorP
+      if (nodelevel.includes(0)) {
+        pieUnits.push({"node": nodeEx, "terminal": terminal, "unitCount": inUnits,"unitCost": inUnits * data.nodes.find(d => d.name === nodeEx).cost, "sColor": data.nodes.find(d => d.name === nodeEx).COQ, "sGorP": data.nodes.find(d => d.name === nodeEx).GorP })
+      
+      }
+      else {
 
-    // sColor = sankeyNodes.filter(b => b.name === nodeEx)[0].x0
-    sColor = data.nodes.find(d => d.name === nodeEx).COQ
-    sGorP = data.nodes.find(d => d.name === nodeEx).GorP
-    sUnits = nodeUnits[nodeEx]
-    sunitCost = data.nodes.find(d => d.name === nodeEx).cost * sUnits
-    pieUnits.push({ "node": nodeEx, "terminal": terminal, "units": sUnits, "unitCost": sunitCost, "sColor": sColor, "sGorP": sGorP })
-  }
-  // console.log("pieUnits")
-  // console.log(pieUnits)
-  // drawPie(pieUnits)
-  // data = data2
+        sUnits = nodeUnits[nodeEx]
+        sunitCost = data.nodes.find(d => d.name === nodeEx).cost * sUnits
+        pieUnits.push({ "node": nodeEx, "terminal": terminal,"unitCount": sUnits, "unitCost": sunitCost, "sColor": sColor, "sGorP": sGorP })
+      }
+    }
+  
   ///// End set up pie chart
 
   //// Pass pie data to Indicators and draw.
-  drawIndicators(pieUnits)
+  drawIndicators(pieUnits, data)
 
   //// Begin Unit Count Bar Chart ////////////
-  var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "unitCost": inUnits * data.nodes.find(d => d.name === nodeArray[0]).cost, "sColor": data.nodes.find(d => d.name === nodeArray[0]).COQ, "sGorP": data.nodes.find(d => d.name === nodeArray[0]).GorP }]
-  for (nodeEx of nodeArray.slice(1)) {
-    var terminal = targetArray.includes(nodeEx) && !sourceArray.includes(nodeEx)
+    // targetUnits is used for bar charts, is pieUnits but resets all but the initial unit count/cost.
+    // Will get updated by the Sankey model particles below.
 
-    sColor = data.nodes.find(d => d.name === nodeEx).COQ
-    sGorP = data.nodes.find(d => d.name === nodeEx).GorP
-    targetUnits.push({ "node": nodeEx, "terminal": terminal, "units": 0, "unitCost": 0, "sColor": sColor, "sGorP": sGorP })
-  }
+    // deep copy of pieUnits per https://www.javascripttutorial.net/object/3-ways-to-copy-objects-in-javascript/ 
+    var targetUnits = JSON.parse(JSON.stringify(pieUnits))
+    for (nodeEx of nodeArray) {
+      nodelevel = data.links.filter(d => d.source.name === nodeEx).map(p=>p.level)
+      if (!nodelevel.includes(0)) {
+        targetUnits.find(d=>d.node === nodeEx).unitCount = 0
+        targetUnits.find(d=>d.node === nodeEx).unitCost = 0
+      }}
+
 
   var svg = d3.select("#barcharts"),
     margin = { top: 70, right: 20, bottom: 250, left: 100 },
@@ -312,7 +295,7 @@ function drawUnits(data) {
   // set the domains of the axes
   x.domain(targetUnits.map(function (d) { return d.node; }));
   y.domain([0, d3.max(targetUnits.map(d => d.unitCost))]);
-  // y.domain([0, inUnits]);
+  
 
 
 
@@ -344,8 +327,7 @@ function drawUnits(data) {
     .attr("fill", "black")
     .text("(Cost in $)");
 
-  // var targetUnits = [{ "node": nodeArray[0], "terminal": false, "units": inUnits, "sColor": sankeyNodes.filter(b => b.name === nodeArray[0])[0].x0 }]
-
+ 
 
   g.selectAll(".bar")
     .data(targetUnits)
@@ -356,7 +338,6 @@ function drawUnits(data) {
     .attr("width", x.bandwidth())
     .attr("height", function (d) { return height - y(d.unitCost); })
     .style("fill", function (d) { return colorLookup[d.sColor] })
-    // .style("fill", function (d) { return nodeColour(d.sColor) })
     .style("opacity", 0.5);
 
 
@@ -423,7 +404,7 @@ function drawUnits(data) {
         d3.sum(node.targetLinks, d => d.value)
       )
     })
-    // console.log(nodes)
+    
     var nodesByBreadth = d3.nest()
       .key(function (d) { return d.x; })
       .sortKeys(d3.ascending)
@@ -461,33 +442,45 @@ function drawUnits(data) {
   data.links.forEach(function (link) {
     link.freq = frequencyScale(link.value);
     link.particleSize = 2;
-    // Makes particles same color as node bars
-    // link.particleColor = d3.scaleLinear().domain([0, 1])
-    //   .range([link.source.color, link.target.color]);
 
   })
 
-
+if (inUnits < 1001) {
   let t = d3.interval(elapsed => {
     tick(elapsed);
     if (d3.select("#killData").node().value === "stoptime") { t.stop() }
   });
 
-  var particles = [];
-  var totalUnits = []
-  levels = [...new Set(Array.from(data.links, d => d.level))]
-  // console.log(levels)
-  level = -1
 
+}
+
+else {
+    targetUnits = pieUnits
+    updateCharts()
+    updateIndicator(pieUnits,data)
+  let t = d3.interval(elapsed => {
+    tick1000plus(elapsed);
+    if (d3.select("#killData").node().value === "stoptime") { t.stop() }
+  });
+
+}
+
+var particles = [];
+var totalUnits = []
+levels = [...new Set(Array.from(data.links, d => d.level))]
+
+level = -1
+
+//////////////////////////// For if units <1000
   function tick(elapsed, time) {
 
-    // console.log(elapsed)
+    
     if (particles.filter(d => d.current < d.length).length === 0) {
 
       if (particles.length > 0) {
         totalUnits = totalUnits.concat(particles)
         updateCharts()
-        updateIndicator(targetUnits)
+        updateIndicator(targetUnits, data)
 
       }
       level = level + 1
@@ -496,22 +489,58 @@ function drawUnits(data) {
     }
 
     //Set speed scale
-    speedScale = d3.scaleLinear().domain([0, inUnits]).range([0.5, 1])
+    speedScale = d3.scaleLinear().domain([0, inUnits]).range([.5,1.5])
 
     d3.selectAll("#path-" + (level))
       .each(
         function (d, i) {
           var offset = (Math.random() - .5) * (d.dy - 4)
           var length = this.getTotalLength();
-          particles.push({ link: d, time: elapsed, offset: offset, path: this, length: length, animateTime: length, speed: speedScale(d.unitCount) + speedScale(Math.random()) })
+          particles.push({ link: d, time: elapsed, offset: offset, path: this, length: length, animateTime: length, speed: speedScale(d.unitCount) + speedScale(Math.random())  })
         });
 
     testParticles = []
     for (particleLink of d3.selectAll("#path-" + level).data()) {
+      
       testParticles = testParticles.concat(particles.filter(d => d.link === particleLink).slice(0, particleLink.unitCount))
     }
     particles = testParticles
+    
+    particleEdgeCanvasPath(elapsed)
 
+  }
+
+  //////////////////////////// For if units are 1000 plus
+  function tick1000plus(elapsed, time) {
+    
+    if (particles.filter(d => d.current < d.length).length === 0) {
+
+     level = level + 1
+
+      particles = []
+    }
+    
+
+    // unit scale down to 1000
+    unitScale = d3.scaleLinear().domain([0,inUnits]).range([0,1000])
+
+    d3.selectAll("#path-" + (level))
+      .each(
+        function (d, i) {
+          var offset = (Math.random() - .5) * (d.dy - 4)
+          var length = this.getTotalLength();
+          particles.push({ link: d, time: elapsed, offset: offset, path: this, length: length, animateTime: length, speed: 0.5 + (Math.random()) })
+        });
+        
+
+    testParticles = []
+    for (particleLink of d3.selectAll("#path-" + level).data()) {
+      
+      testParticles = testParticles.concat(particles.filter(d => d.link === particleLink).slice(0, unitScale(particleLink.unitCount)))
+    }
+    
+    particles = testParticles
+   
     particleEdgeCanvasPath(elapsed)
 
   }
@@ -525,7 +554,7 @@ function drawUnits(data) {
     context.lineWidth = "1px";
     for (ind in particles) {
       var currentTime = elapsed - particles[ind].time;
-      particles[ind].current = currentTime * 0.15 * particles[ind].speed;
+      particles[ind].current = currentTime *0.15 * particles[ind].speed;
 
       var currentPos = particles[ind].path.getPointAtLength(particles[ind].current);
       context.beginPath();
@@ -537,20 +566,18 @@ function drawUnits(data) {
 
   /////////////////////// updates Unit Bar Chart
   function updateCharts() {
-
+    if (inUnits<1000) {
     for (nodeEx of Array.from(data.nodes, d => d.name).slice(1)) {
 
       lookupTarget = targetUnits.find(p => p.node == nodeEx)
-      lookupTarget.units = totalUnits.filter(d => d.link.target.name === nodeEx).length
+      lookupTarget.unitCount = totalUnits.filter(d => d.link.target.name === nodeEx).length
       lookupTarget.unitCost = totalUnits.filter(d => d.link.target.name === nodeEx).length * data.nodes.find(d => d.name === nodeEx).cost
 
     }
-
-    console.log("Total exiting system: " + d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units)))
-    // if (d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.units))===inUnits) {
-    // pieUnits = targetUnits
-    // drawPie()
-    // }
+  }
+    
+    console.log("Total exiting system: " + d3.sum(targetUnits.filter(d => d.terminal === true).map(d => d.unitCount)))
+  
     // update the bars
     y.domain([0, d3.max(targetUnits.map(d => d.unitCost))]);
     d3.selectAll(".axis").filter(".axis--y")
@@ -582,4 +609,5 @@ function drawUnits(data) {
       })
 
   }
+
 }

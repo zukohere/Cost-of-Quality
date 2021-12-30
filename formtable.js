@@ -1,10 +1,11 @@
 function formTable() {
+
     // get the original data
-    d3.json("example-data.json", function (err, data) {
+    d3.json(dataSelect(), function (err, data) {
 
 
         rawdata = data.data
-        console.log(rawdata)
+
         ///////////////////////////// PROBABILITY TABLE
         // set up the table
         var table = d3.select("#inputTable").append("table").attr("border", 1);
@@ -13,10 +14,11 @@ function formTable() {
         var header = table.append("thead").append("tr");
         header
             .selectAll("th")
-            .data(["Source Node", "Link Probability", "Value (%)"])
+            .data(["Source Node", "Target Node", "Probability(%)"])
             .enter()
             .append("th")
             .text(d => { return d })
+            .attr("id", d => { return d.replace("(%)", "") })
 
         row = []
         sourceArray = [...new Set(Array.from(rawdata.links, d => d.source))]
@@ -44,8 +46,8 @@ function formTable() {
                 .attr("type", "text")
                 .style("width", "60px")
                 .attr("id", rawdata.links[n].source + "-->" + rawdata.links[n].target)
-                .attr("name", rawdata.links[n].source + "-->" + rawdata.links[n].target)
-                .attr("value", rawdata.links[n].units)
+                .attr("name", rawdata.links[n].target)
+                .attr("value", rawdata.links[n].units + "%")
                 .text()
 
         }
@@ -67,7 +69,7 @@ function formTable() {
         row = []
 
         formatLookup = { "inUnits": ",", "unitSales": "$,", "copqGoal": ".3%", "cogqGoal": ".3%" }
-        titleLookup = {"inUnits": "Input Units (#)", "unitSales": "Sales $/unit", "copqGoal": "COPQ Goal Level (%)", "cogqGoal": "COGQ Goal Level (%)"}
+        titleLookup = { "inUnits": "Input Units (#)", "unitSales": "Sales $/unit", "copqGoal": "COPQ Goal Level (%)", "cogqGoal": "COGQ Goal Level (%)" }
         for (n in valueKeys) {
             fmt = d3.format(formatLookup[valueKeys[n][0]])
 
@@ -81,7 +83,7 @@ function formTable() {
                 .attr("type", "text")
                 .style("width", "75px")
                 .attr("id", valueKeys[n][0])
-                .attr("name", valueKeys[n][0])
+                .attr("name", titleLookup[valueKeys[n][0]])
                 .attr("value", fmt(valueKeys[n][1]))
         }
 
@@ -122,43 +124,141 @@ function formTable() {
     })
 }
 function submitData() {
-    d3.json("example-data.json", function (err, data) {
+    //get original data
+    d3.json(dataSelect(), function (err, data) {
 
 
         rawdata = data.data
-        console.log(rawdata)
+
 
         costTabInputs = d3.select("#costTable").selectAll("input").nodes()
         for (d3node of costTabInputs) {
-            operation = rawdata.nodes.find(d=>d.name===d3node.name)
-            if (d3node.value.includes("%")) {  operation.cost = d3node.value.replace("%", "") / 100 }
-            else { operation.cost = d3node.value.replace("$", "").replace(",", "") }
+            operation = rawdata.nodes.find(d => d.name === d3node.name)
+            if (d3node.value.includes("%")) { operation.cost = d3node.value.replace("%", "").replace("$", "").replace(",", "") / 100 }
+            else { operation.cost = +d3node.value.replace("$", "").replace(",", "") }
+            checkInputs(d3node.value, d3node.name)
         }
 
         valueTabInputs = d3.select("#valueTable").selectAll("input").nodes()
-        for (node of valueTabInputs) {
-            if (node.value.includes("%")) { rawdata[node.name] = node.value.replace("%", "") / 100 }
-            else { rawdata[node.name] = node.value.replace("$", "").replace(",", "") }
+        for (d3node of valueTabInputs) {
+            if (d3node.value.includes("%")) { rawdata[d3node.id] = d3node.value.replace("%", "").replace("$", "").replace(",", "") / 100 }
+            else { rawdata[d3node.id] = d3node.value.replace("$", "").replace(",", "") }
+            checkInputs(d3node.value, d3node.name)
+
         }
 
-        probTabInputs = d3.select("#inputTable").selectAll("input").nodes()
-        for (node of probTabInputs) {
-            nSource = node.name.split("-->")[0]
-            nTarget = node.name.split("-->")[1]
+        ////////// Probability vs Known Value Models
 
-            nLink = rawdata.links.find(d => d.source === nSource && d.target === nTarget)
-            // console.log(node.name)
-            // console.log(nLink)
-            nLink.units = node.value
+        if (d3.select("#modelType").node().value === "probVal") {
+            ///// Updates probability in the rawdata
+            probTabInputs = d3.select("#inputTable").selectAll("input").nodes()
+            for (d3node of probTabInputs) {
+                nSource = d3node.id.split("-->")[0]
+                nTarget = d3node.id.split("-->")[1]
+
+                nLink = rawdata.links.find(d => d.source === nSource && d.target === nTarget)
+
+                nLink.units = +d3node.value.replace("%", "").replace("$", "").replace(",", "")
+                checkInputs(d3node.value, d3node.id)
+
+            }
+            //// Turns probability into "actual" counts of units and deals with rounding errors
+            for (level of [...new Set(Array.from(rawdata.links, d => d.level))]) {
+                links = rawdata.links.filter(d => d.level === level)
+                for (link of links) {
+                    prevLinks = rawdata.links.filter(d => d.target === link.source)
+                    if (!link.unitCount) {
+
+                        if (level === 0) { link.unitCount = rawdata.inUnits * link.units / 100 }
+                        else {
+
+                            link.unitCount = Math.floor(link.units / 100 * d3.sum(Array.from(prevLinks, d => d.unitCount)))
+
+                            if (link === links[links.length - 1])
+                                while (d3.sum(rawdata.links.filter(d => d.source === link.source).map(d => d.unitCount)) <
+                                    d3.sum(rawdata.links.filter(d => d.target === link.source).map(d => d.unitCount))) {
+                                    var ind = getRandomIntInclusive(0, links.length - 1)
+                                    links[ind].unitCount = links[ind].unitCount + 1 * (Math.random() * 100 < link.units)
+                                }
+                        }
+
+                    }
+                }
+
+            }
+        }
+        else if (d3.select("#modelType").node().value === "knownVal") {
+            /// Known value model
+            knownTabInputs = d3.select("#inputTable").selectAll("input").nodes()
+            for (d3node of knownTabInputs) {
+                nSource = d3node.id.split("-->")[0]
+                nTarget = d3node.id.split("-->")[1]
+
+                nLink = rawdata.links.find(d => d.source === nSource && d.target === nTarget)
+
+                nLink.unitCount = d3node.value.replace("%", "").replace("$", "").replace(",", "")
+                if (nLink === rawdata.links[0]) {
+                    rawdata["inUnits"] = nLink.unitCount
+                    alert("Overwriting Input Units with User's Known Count for "
+                        + nSource + "-->" + nTarget + "=" + rawdata["inUnits"])
+                }
+
+            }
+
         }
 
-
-        // // console.log(d3.select("#valueTable").selectAll("input").nodes())
-        // console.log(d3.select("#valueTable").selectAll("input").nodes()[0].name)
-        // // d3.select("#valueTable").selectAll("input").node().name
-        // console.log(d3.select("#valueTable").selectAll("input").nodes()[0].value)
         dataToDraw = rawdata
+
         drawUnits(dataToDraw)
 
     })
+
+    /// helper function for Probability Model
+    function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+    }
+}
+
+
+function modelChange() {
+    // set input table to known values by changing header title and values to 0.
+    if (d3.select("#modelType").node().value === "knownVal") {
+        alert("CAUTION: Only launch the Known Value Model if all Unit Counts are specified in the model below.")
+        d3.select("#Probability").text("Unit Count(#)")
+        d3.select("#inputTable").selectAll("input").attr("value", 0)
+    }
+    // set input table to probability by changing header title and set values to original probs.
+    else {
+        d3.select("#Probability").text("Probability(%)")
+
+        d3.json(dataSelect(), function (err, data) {
+            d3.select("#inputTable").selectAll("input")
+                .data(rawdata.links)
+                .attr("value", d => d.units + "%")
+
+        })
+    }
+
+}
+
+function checkInputs(invalue, id) {
+    if (isNaN(invalue.replace("%", "").replace("$", "").replace(",", ""))) {
+        alert("Value: " + invalue + " is not valid input for " + id)
+    }
+}
+
+function dataSelect() {
+    console.log(d3.select("#dataType").node().value)
+    var usrDataType = d3.select("#dataType").node().value
+    if (usrDataType === "mfg") {
+        path = "manufacture.json"
+    }
+
+    else
+        if (usrDataType === "pfr") {
+            path = "pfr.json"
+        }
+    return path
 }

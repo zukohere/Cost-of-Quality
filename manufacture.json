@@ -1,8 +1,10 @@
 {"data":
-    {"inUnits": 50,
+    {"inUnits": 6250,
     "unitSales": 10000,
     "copqGoal": 0.01,
     "cogqGoal": 0.02,
+    "chartTitle": "In-House Manufacture COQ Model",
+    "tipText": "hi I'm a Manufacture Model Tool Tip!",
     "nodes": [
       { "name": "Product Development", "cost": 100, "COQ": "Prevention", "GorP": "COGQ"},
       { "name": "Raw/Receiving Inspection", "cost": 100, "COQ": "Appraisal", "GorP": "COGQ"},
@@ -20,9 +22,9 @@
     "links": [
       { "source": "Product Development", "target": "Raw/Receiving Inspection", "value": 10,"units": 100, "optimal": "yes", "level": 0},
 
-      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Scrap", "value": 10,"units": 20, "optimal": "no", "level": 1},
-      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Rework", "value": 10,"units": 20, "optimal": "no", "level": 1},
-      { "source": "Raw/Receiving Inspection", "target": "Manufacture", "value": 10,"units": 60, "optimal": "yes", "level": 1},
+      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Scrap", "value": 10,"units": 10, "optimal": "no", "level": 1},
+      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Rework", "value": 10,"units": 10, "optimal": "no", "level": 1},
+      { "source": "Raw/Receiving Inspection", "target": "Manufacture", "value": 10,"units": 80, "optimal": "yes", "level": 1},
       
       { "source": "Raw/Receiving Rework", "target": "Raw/Receiving Scrap", "value": 10,"units": 20, "optimal": "no", "level": 2},
       { "source": "Raw/Receiving Rework", "target": "Manufacture", "value": 10,"units": 80, "optimal": "yes", "level": 2},
@@ -34,12 +36,12 @@
       { "source": "Manufacturing Inspect", "target": "Rework", "value": 10,"units": 10, "optimal": "no" , "level": 4},
       { "source": "Manufacturing Inspect", "target": "Scrap", "value": 10,"units": 10, "optimal": "no" , "level": 4},
 
-      { "source": "Rework", "target": "Customer", "value": 10,"units": 75, "optimal": "yes" , "level": 5},
-      { "source": "Rework", "target": "Scrap", "value": 10,"units": 25, "optimal": "no" , "level": 5},
+      { "source": "Rework", "target": "Customer", "value": 10,"units": 80, "optimal": "yes" , "level": 5},
+      { "source": "Rework", "target": "Scrap", "value": 10,"units": 20, "optimal": "no" , "level": 5},
 
       { "source": "Customer", "target": "Good Quality", "value": 10,"units": 80, "optimal": "yes" , "level": 6},
-      { "source": "Customer", "target": "Field Scrap", "value": 10,"units": 5, "optimal": "no" , "level": 6},
-      { "source": "Customer", "target": "Return", "value": 10,"units": 15, "optimal": "no" , "level": 6}
+      { "source": "Customer", "target": "Field Scrap", "value": 10,"units": 10, "optimal": "no" , "level": 6},
+      { "source": "Customer", "target": "Return", "value": 10,"units": 10, "optimal": "no" , "level": 6}
     
     ]
   }
