@@ -15,7 +15,7 @@ var indicData = [
       axis: { range: [0, inUnits], visible: false }
     },
     value: inUnits,
-    domain: { x: [0, 0.45], y: [0.5, 0.75] },
+    domain: { x: [0, 0.3], y: [0.6, .8] },
     title: { text: "<b>Quality</b></span>" , font: { size: 14 }}
   },
   {
@@ -26,12 +26,19 @@ var indicData = [
       axis: { range: [0, inUnits], visible: false }
     },
     value: 0,
-    domain: { x: [0, 0.45], y: [0, 0.25] },
+    domain: { x: [0, 0.3], y: [0.2, 0.4] },
     title: {text: "<b>Defective<br></b><span style='color: gray; font-size:0.8em'>(Units)</span>", font: { size: 14 }}
   }
 ];
 
-
+/////////// Net Sales
+var nsIndicator = [{
+  type: "indicator",
+  mode: "number",
+  value: netSales, 
+  number: { valueformat: "$,", font: {size: 30} },
+  domain: { x: [.275, .67], y: [.66, 1] },
+}]
 
 
 
@@ -51,7 +58,7 @@ var coqData = [
     mode: "number+gauge+delta",
     value: indCOPQ,
     number: { valueformat: ".3%" },
-    domain: { x: [.65, 1], y: [2 / 3, 1] },
+    domain: { x: [.75, 1], y: [2 / 3, 1] },
     delta: {
       reference: copqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
@@ -79,7 +86,7 @@ var coqData = [
     mode: "number+gauge+delta",
     value: indCOGQ,
     number: { valueformat: ".3%" },
-    domain: { x: [.65, 1], y: [1 / 3, 2 / 3] },
+    domain: { x: [.75, 1], y: [1 / 3, 2 / 3] },
     delta: {
       reference: cogqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
@@ -106,7 +113,7 @@ var coqData = [
     mode: "number+gauge+delta",
     value: indCOQ,
     number: { valueformat: ".3%" },
-    domain: { x: [.65, 1], y: [0, 1 / 3] },
+    domain: { x: [.75, 1], y: [0, 1 / 3] },
     delta: {
       reference: cogqgoal + copqgoal, position: "top",
       decreasing: { color: "green" }, increasing: { color: "red" }, valueformat: ".3%"
@@ -130,7 +137,7 @@ var coqData = [
   }
 ];
 
-var combinedData = indicData.concat(coqData)
+var combinedData = indicData.concat(nsIndicator).concat(coqData)
 var config_COQ = { responsive: true };
 
 var layout_COQ = {
@@ -149,12 +156,30 @@ svg.call(tool_tip);
 
 svg.append("g")
   .append("text")
-  .attr("x", +svg.attr("width") / 4)
+  .attr("x", +svg.attr("width") / 5)
   .attr("y", +svg.attr("height") / 2)
   .attr("text-anchor", "middle")
   .style("font-size", "16px")
   .style("text-decoration", "underline")
   .text("Defective Unit Counter")
+  .on('mouseover', tool_tip.show)
+  .on('mouseout', tool_tip.hide);
+///// Net Sales tips
+svg = d3.select("#Bullet_titles")
+var tool_tip = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([50, 0])
+  .html("Sales Dollars per Unit times the number of Input Units");
+svg.call(tool_tip);
+
+svg.append("g")
+  .append("text")
+  .attr("x", +svg.attr("width") / 1.95)
+  .attr("y", +svg.attr("height") / 2)
+  .attr("text-anchor", "middle")
+  .style("font-size", "16px")
+  .style("text-decoration", "underline")
+  .text("Net Sales")
   .on('mouseover', tool_tip.show)
   .on('mouseout', tool_tip.hide);
 
@@ -172,7 +197,7 @@ svg.call(tool_tip1);
 
 svg.append("g")
   .append("text")
-  .attr("x", 3.1 * +svg.attr("width") / 4)
+  .attr("x", 4.15 * +svg.attr("width") / 5)
   .attr("y", +svg.attr("height") / 2)
   .attr("text-anchor", "middle")
   .style("font-size", "16px")
@@ -201,6 +226,6 @@ function updateIndicator(unitIndicator,iData) {
   indCOGQ = d3.sum(unitIndicator.filter(d => d.sGorP === "COGQ").map(d => d.unitCost)) / netSales
   indCOQ = (indCOPQ + indCOGQ)
   
-  Plotly.restyle(d3.selectAll("#plotly_COQ").node(), "value", [goodUnits, defectUnits, indCOPQ, indCOGQ, indCOQ])
+  Plotly.restyle(d3.selectAll("#plotly_COQ").node(), "value", [goodUnits, defectUnits, netSales, indCOPQ, indCOGQ, indCOQ])
   
 }

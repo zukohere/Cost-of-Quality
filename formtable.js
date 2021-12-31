@@ -100,7 +100,7 @@ function formTable() {
 
         header
             .selectAll("th")
-            .data(["Operation", "Cost"])
+            .data(["Operation", "Cost/Unit"])
             .enter()
             .append("th")
             .text(d => { return d })
@@ -128,7 +128,7 @@ function formTable() {
 
 
     })
-    console.log(d3.select("#modelType").node().value)
+    
 }
 function submitData() {
     //get original data
@@ -259,8 +259,9 @@ function checkInputs(invalue, id) {
 
 function checkProbs() {
 // if probVal then for each source node check the sum of the probs of each target equal 100%
+// known value error checking is in draw-units
 if (d3.select("#modelType").node().value==="probVal") {
-    console.log(d3.select("#inputTable").selectAll("input"))
+    
     probTotalsNot100= {}
 
     for (source of rawdata.links.map(d=>d.source)){
@@ -269,7 +270,7 @@ if (d3.select("#modelType").node().value==="probVal") {
             probTotal += rawdata.links.find(d=>d.source===source && d.target===target).units
         }
         if (probTotal!=100) {
-            console.log(probTotal)
+            
             probTotalsNot100[source] = probTotal
         }
     }
