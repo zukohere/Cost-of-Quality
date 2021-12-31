@@ -71,6 +71,13 @@ function drawUnits(data) {
     .enter()
     .append("g");
   
+
+  var node_tool_tip = d3.tip()
+    .attr("class", "d3-tip")
+    .offset([75, 0])
+    .html(function (d) { return d.name + "<br>" + "$" + (d.cost) + "/unit"; });
+    svg.call(node_tool_tip);
+
   node.append("rect")
     .attr("x", function (d) { return d.x0; })
     .attr("y", function (d) { return d.y0; })
@@ -78,7 +85,9 @@ function drawUnits(data) {
     .attr("width", function (d) { return d.x1 - d.x0; })
     .style("fill", function (d) { return (colorLookup[d.COQ]); })
     .style("opacity", 0.5)
-    .on("mouseover", function (d) {
+    .on("mouseover",  function (d) {
+      console.log(d)
+      node_tool_tip.offset([-d.height,0]).show(d)
 
       let thisName = d.name;
 
@@ -98,7 +107,7 @@ function drawUnits(data) {
         })
     })
     .on("mouseout", function (d) {
-
+      node_tool_tip.hide(d)
       node.selectAll("rect").style("opacity", 0.5);
       d3.selectAll(".sankey-link").style("opacity", 0.7);
       node.selectAll("text").style("opacity", 1);
@@ -110,11 +119,8 @@ function drawUnits(data) {
     .attr("dy", "0.35em")
     .attr("text-anchor", "start")
     .text(function (d) { return d.name; });
-
-  // adds tooltip on hover over node rectangles.
-  node.append("title")
-    .text(function (d) { return d.name + "\n" + "$" + (d.cost) + "/unit"; });
   
+
 
   var link = linkG.data(sankeyLinks)
     .enter()

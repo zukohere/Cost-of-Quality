@@ -58,4 +58,5 @@ Please feel free to share your ideas for improvements with me!
  * The bullet charts are plotly https://plotly.com/javascript/indicator/
  * The pie chart is modified from https://codepen.io/danbrellis/pen/aEMGMp
  * The bar chart is modified from the d3 gallery https://www.d3-graph-gallery.com/graph/barplot_animation_start.html
+ * d3 tooltips from http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7
  * Cost of Quality concept references include ASQ (https://asq.org/quality-resources/cost-of-quality) and Quality America (https://qualityamerica.com/LSS-Knowledge-Center/qualitymanagement/cost_of_quality_overview.php)
