@@ -1,19 +1,19 @@
 {"data":
     {"inUnits": 250,
-    "unitSales": 10000,
+    "unitSales": 4500,
     "copqGoal": 0.01,
-    "cogqGoal": 0.02,
+    "cogqGoal": 0.06,
     "chartTitle": "Product For Resale COQ Model",
     "tipText": "This Sankey flow chart is a simplified PFR model. <br> Units move from operation to operation. <br> Units identified as defective and the operations that deal with them are colored red.",
     "nodes": [
-      { "name": "Purchasing Controls", "cost": 100, "COQ": "Prevention", "GorP": "COGQ"},
-      { "name": "Receiving Inspection", "cost": 100, "COQ": "Appraisal", "GorP": "COGQ"},
-      { "name": "Receiving Scrap", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
+      { "name": "Purchasing Controls", "cost": 85, "COQ": "Prevention", "GorP": "COGQ"},
+      { "name": "Receiving Inspection", "cost": 40, "COQ": "Appraisal", "GorP": "COGQ"},
+      { "name": "Receiving Scrap", "cost": 140, "COQ": "Internal Failure", "GorP": "COPQ"},
       { "name": "Receiving Rework", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
-      { "name": "Customer", "cost": 175, "COQ": "Shipping", "GorP": "COGQ"},
-      { "name": "Good Quality" , "cost": 100, "COQ": "End User", "GorP": "COGQ"},
-      { "name": "Return", "cost": 120, "COQ": "External Failure", "GorP": "COPQ"},
-      { "name": "Field Scrap", "cost": 140, "COQ": "External Failure", "GorP": "COPQ"}
+      { "name": "Customer", "cost": 75, "COQ": "Shipping", "GorP": "COGQ"},
+      { "name": "Good Quality" , "cost": 50, "COQ": "End User", "GorP": "COGQ"},
+      { "name": "Return", "cost": 180, "COQ": "External Failure", "GorP": "COPQ"},
+      { "name": "Field Scrap", "cost": 170, "COQ": "External Failure", "GorP": "COPQ"}
     ],
     "links": [
       { "source": "Purchasing Controls", "target": "Receiving Inspection", "value": 10,"units": 100, "optimal": "yes", "level": 0},

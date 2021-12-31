@@ -130,10 +130,10 @@ function drawUnits(data) {
     })
     .attr("id", function (d) { return "path-" + d.level })
 
-  // link.append("title")
-  //   .text(function (d) {
-  //     return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
-  //   });
+  link.append("title")
+    .text(function (d) {
+      return d.source.name + " → " + d.target.name + "\n Index: " + (d.index);
+    });
 
     var chartTitle = data.chartTitle
     var tipText = data.tipText
