@@ -100,13 +100,20 @@
       font-family: monospace;
     }
 
-    .table,
+    .table {
+      border-collapse: collapse;
+    }
+
     td {
       padding: 8px;
     }
 
     th {
       text-align: center
+    }
+
+    td.border_bottom {
+      border-bottom: 5px solid black;
     }
 
     hr {
@@ -134,7 +141,8 @@
 </center>
 <section class="row">
   <div class="col-md-2"></div>
-  <div class="col-md-8"><strong>ABOUT:</strong> The <a href="https://asq.org/quality-resources/cost-of-quality">Cost of Quality (COQ)</a> is metric that can aid in targeting efforts
+  <div class="col-md-8"><strong>ABOUT:</strong> The <a href="https://asq.org/quality-resources/cost-of-quality">Cost of
+      Quality (COQ)</a> is metric that can aid in targeting efforts
     for continuous improvement, but only where the metric is understood and transparent. <br>
     <br>
     The common components of the COQ are: <br>
@@ -147,19 +155,21 @@
         </ul>
       </li>
       <li>Cost of Poor Quality (COPQ)
-          <ul>
-            <li>Internal Failure: Scrap, Rework</li>
-            <li>External Failure: Returns, Field Scrap, Field Service</li>
-          </ul>
-        </li>
+        <ul>
+          <li>Internal Failure: Scrap, Rework</li>
+          <li>External Failure: Returns, Field Scrap, Field Service</li>
+        </ul>
+      </li>
     </ul>
 
     <br>
     To aid in education about the components of the COQ and how to develop a model with visualizations, I developed this
     interactive dashboard to help better illustrate the COQ and its components. For more information, references, and
-    applications, see the README. You can run the basic model by clicking the button below. 
-    Scroll down or <a href="#AdjustParams">click here</a> to move to the section of the page with model paramater adjustment.
-
+    applications, see the <a href="https://github.com/zukohere/Cost-of-Quality/blob/main/README.md">README</a>. You can run the basic model by clicking the button below.
+    Scroll down or <a href="#AdjustParams">click here</a> to move to the section of the page with model paramater
+    adjustment.
+    <br><br>
+    <strong>The dashboard will run on click of either button. Hover over the title of any visualization for more info.</strong>
   </div>
 </section>
 
@@ -169,7 +179,7 @@
     <h1>Dashboard</h1>
   </div>
   (Run with defaults by clicking this button or <a href="#AdjustParams">adjust input parameters below</a>.)<br>
-  <button id="killData" onclick="killData()" value="test">Run with Current Values</button>
+  <a href="#Dashboard"><button id="killData" onclick="killData()" value="test">Run with Current Values</button></a>
 
   <div id="block container">
     <!-- Sankey model -->

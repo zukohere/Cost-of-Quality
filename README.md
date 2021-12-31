@@ -2,6 +2,9 @@
 Sankey Flow to Visualize Cost of Quality 
 https://zukohere.github.io/Cost-of-Quality/
 
+# Requirements
+While the Dashboard does run on mobile devices, it is best viewed on the phone. There are tooltips linked to the titles of each visualization that guide the user on how to use them.
+
 ## Motivation
 I have over 10 years of experience in  Quality Management (at the time this is written). I have seen organizations develop different kinds of quality metrics, and many consider Cost of Quality to be one to manage by. However, attempts to make the metric transparent or develop dashboards are often difficult. Aside from data source and data gathering concerns, the metric is not well understood when it sits in a report among dozens of other measures as simply "COPQ as % of Net Sales". Questions like "What exactly are we measuring?" and "How does this help me direct improvement?" and "What do we do about this?" are natural with any metric, but this one always seemed especially elusive. 
 

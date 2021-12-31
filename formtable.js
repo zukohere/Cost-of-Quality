@@ -28,20 +28,27 @@ function formTable() {
             sourceLinks = rawdata.links.filter(d => d.source === rawdata.links[n].source)
             // Always add a row
             row[n] = table.append("tr")
+            
             // if it's the first time the source is coming up, append the td for the source.
             if (rawdata.links[n] === sourceLinks[0]) {
                 sourceCell = row[n]
                     .append("td")
+                    .attr("class", "border_bottom")
                     .text(rawdata.links[n].source)
                     .attr("rowspan", sourceLinks.length)
+                    
             }
             // otherwise go straight to appending the td's for target and value 
             targetCell = row[n]
                 .append("td")
-                .text(rawdata.links[n].target)
+                if (+n===rawdata.links.length-1 || (n<rawdata.links.length-1 && rawdata.links[n].source != rawdata.links[+n+1].source))
+                {targetCell.attr("class", "border_bottom")}
+                targetCell.text(rawdata.links[n].target)
             valueCell = row[n]
                 .append("td")
-                .append("input")
+                if (+n===rawdata.links.length-1 || (n<rawdata.links.length-1 && rawdata.links[n].source != rawdata.links[+n+1].source))
+                {valueCell.attr("class", "border_bottom")}
+                valueCell.append("input")
                 .attr("type", "text")
                 .style("width", "60px")
                 .attr("id", rawdata.links[n].source + "-->" + rawdata.links[n].target)
@@ -121,6 +128,7 @@ function formTable() {
 
 
     })
+    console.log(d3.select("#modelType").node().value)
 }
 function submitData() {
     //get original data
@@ -206,7 +214,7 @@ function submitData() {
             }
 
         }
-
+        checkProbs()
         dataToDraw = rawdata
         
         drawUnits(dataToDraw)
@@ -248,6 +256,30 @@ function checkInputs(invalue, id) {
         alert("Value: "+invalue+" is not valid input for "+id)
     }
 }
+
+function checkProbs() {
+// if probVal then for each source node check the sum of the probs of each target equal 100%
+if (d3.select("#modelType").node().value==="probVal") {
+    console.log(d3.select("#inputTable").selectAll("input"))
+    probTotalsNot100= {}
+
+    for (source of rawdata.links.map(d=>d.source)){
+        probTotal = 0
+        for (target of rawdata.links.filter(d=>d.source === source).map(d=>d.target)){
+            probTotal += rawdata.links.find(d=>d.source===source && d.target===target).units
+        }
+        if (probTotal!=100) {
+            console.log(probTotal)
+            probTotalsNot100[source] = probTotal
+        }
+    }
+        if (Object.keys(probTotalsNot100).length !=0) {
+        alert("Probabilities from source do not sum to 100%. "+ JSON.stringify(probTotalsNot100))
+        }
+    }
+}
+
+
 
 function dataSelect() {
     

@@ -7,23 +7,23 @@
     "tipText": "This Sankey flow chart is a simplified PFR model. <br> Units move from operation to operation. <br> Units identified as defective and the operations that deal with them are colored red.",
     "nodes": [
       { "name": "Purchasing Controls", "cost": 100, "COQ": "Prevention", "GorP": "COGQ"},
-      { "name": "Raw/Receiving Inspection", "cost": 100, "COQ": "Appraisal", "GorP": "COGQ"},
-      { "name": "Raw/Receiving Scrap", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
-      { "name": "Raw/Receiving Rework", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
+      { "name": "Receiving Inspection", "cost": 100, "COQ": "Appraisal", "GorP": "COGQ"},
+      { "name": "Receiving Scrap", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
+      { "name": "Receiving Rework", "cost": 100, "COQ": "Internal Failure", "GorP": "COPQ"},
       { "name": "Customer", "cost": 175, "COQ": "Shipping", "GorP": "COGQ"},
       { "name": "Good Quality" , "cost": 100, "COQ": "End User", "GorP": "COGQ"},
       { "name": "Return", "cost": 120, "COQ": "External Failure", "GorP": "COPQ"},
       { "name": "Field Scrap", "cost": 140, "COQ": "External Failure", "GorP": "COPQ"}
     ],
     "links": [
-      { "source": "Purchasing Controls", "target": "Raw/Receiving Inspection", "value": 10,"units": 100, "optimal": "yes", "level": 0},
+      { "source": "Purchasing Controls", "target": "Receiving Inspection", "value": 10,"units": 100, "optimal": "yes", "level": 0},
 
-      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Scrap", "value": 10,"units": 10, "optimal": "no", "level": 1},
-      { "source": "Raw/Receiving Inspection", "target": "Raw/Receiving Rework", "value": 10,"units": 10, "optimal": "no", "level": 1},
-      { "source": "Raw/Receiving Inspection", "target": "Customer", "value": 10,"units": 80, "optimal": "yes", "level": 1},
+      { "source": "Receiving Inspection", "target": "Receiving Scrap", "value": 10,"units": 10, "optimal": "no", "level": 1},
+      { "source": "Receiving Inspection", "target": "Receiving Rework", "value": 10,"units": 10, "optimal": "no", "level": 1},
+      { "source": "Receiving Inspection", "target": "Customer", "value": 10,"units": 80, "optimal": "yes", "level": 1},
       
-      { "source": "Raw/Receiving Rework", "target": "Raw/Receiving Scrap", "value": 10,"units": 20, "optimal": "no", "level": 2},
-      { "source": "Raw/Receiving Rework", "target": "Customer", "value": 10,"units": 80, "optimal": "yes", "level": 2},
+      { "source": "Receiving Rework", "target": "Receiving Scrap", "value": 10,"units": 20, "optimal": "no", "level": 2},
+      { "source": "Receiving Rework", "target": "Customer", "value": 10,"units": 80, "optimal": "yes", "level": 2},
       
       { "source": "Customer", "target": "Good Quality", "value": 10,"units": 80, "optimal": "yes" , "level": 6},
       { "source": "Customer", "target": "Field Scrap", "value": 10,"units": 10, "optimal": "no" , "level": 6},
