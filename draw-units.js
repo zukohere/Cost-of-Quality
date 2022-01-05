@@ -380,6 +380,7 @@ function drawUnits(data) {
     "<br> a representative quantity.");
   svg.call(tool_tip);
 
+  // title with hover text
   g.append("g")
     .append("text")
     .attr("x", (width / 2 - 40))
@@ -391,6 +392,20 @@ function drawUnits(data) {
     .on('mouseover', tool_tip.show)
     .on('mouseout', tool_tip.hide);
 
+  // subtitle COPQ, COGQ
+  g.selectAll(".subtitle")
+    .data(["COPQ", "COGQ"])
+    .enter()
+    .append("text")
+    .text(function (d) {return d})
+    .attr("x", function(d,i) {return (width / 2 - 70)+60*(i)})
+    .attr("y", 0 - (margin.top / 2)+20)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .append("tspan")
+    .text(" ■")
+    .style("fill", function(d) {return colorLookup[d]})
+  
 
   ///////////////////////////// End Unit Bar Chart
   drawPie(pieUnits)
